@@ -72,7 +72,6 @@ RUN /usr/sbin/groupadd -r -f -g $BLUECHERRY_GROUP_ID bluecherry && \
         echo bluecherry bluecherry/db_user string $user;                                \
         echo bluecherry bluecherry/db_password password $password;                      \
     } | debconf-set-selections  && \
-
     wget -q https://dl.bluecherrydvr.com/key/bluecherry.asc && \
     apt-key add bluecherry.asc && \
     wget --no-check-certificate --output-document=/etc/apt/sources.list.d/bluecherry-bionic.list https://dl.bluecherrydvr.com/sources.list.d/bluecherry-bionic-unstable.list && \
