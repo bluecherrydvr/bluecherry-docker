@@ -72,11 +72,13 @@ RUN /usr/sbin/groupadd -r -f -g $BLUECHERRY_GROUP_ID bluecherry && \
         echo bluecherry bluecherry/db_user string $user;                                \
         echo bluecherry bluecherry/db_password password $password;                      \
     } | debconf-set-selections  && \
-	apt -y install wget gnupg && \
+        apt -y install wget gnupg supervisor && \
     wget -q https://dl.bluecherrydvr.com/key/bluecherry.asc && \
     apt-key add bluecherry.asc && \
     wget --no-check-certificate --output-document=/etc/apt/sources.list.d/bluecherry-bionic.list https://dl.bluecherrydvr.com/sources.list.d/bluecherry-bionic-unstable.list && \
     apt-get update && \
-    apt --no-install-recommends -y install bluecherry
+    apt --no-install-recommends -y install mysql-client bluecherry
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 CMD ["/usr/bin/supervisord"]
