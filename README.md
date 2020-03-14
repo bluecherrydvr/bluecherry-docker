@@ -1,1 +1,1 @@
-# server-docker
+# Bluecherry Server docker
