@@ -5,7 +5,7 @@ Based off the initial work by rayzorben (https://github.com/rayzorben/bluecherry
 
 This installs the latest beta of Bluecherry server using a Ubuntu 18.04 docker image.
 
-1. Clone the repository with `git clone https://github.com/bluecherrydvr/server-docker`
+1. Clone the repository with `git clone https://github.com/bluecherrydvr/bluecherry-docker`
 2. Default passwords for mysql are in `.env`.  It is recommended to change atleast MYSQL_ADMIN_PASSWORD for a production environment
 3. Start mysql image with `docker-compose up -d mysql` (Follow this step by step guide if you do not have docker-compose - https://docs.docker.com/compose/install/)
 4. Build the bluecherry image with `docker-compose build`
