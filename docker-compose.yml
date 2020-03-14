@@ -1,0 +1,45 @@
+version: '3.7'
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+        - ./db:/var/lib/mysql
+    environment:
+        MYSQL_ROOT_PASSWORD: $MYSQL_ADMIN_PASSWORD
+        TZ: $TZ
+
+  bluecherry:
+    container_name: bluecherry
+    build:
+        context: .
+        network: bluecherry_net
+        args:
+          MYSQL_ADMIN_LOGIN: $MYSQL_ADMIN_LOGIN
+          MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD
+          BLUECHERRY_DB_USER: $BLUECHERRY_DB_USER
+          BLUECHERRY_DB_PASSWORD: $BLUECHERRY_DB_PASSWORD
+          BLUECHERRY_DB_NAME: $BLUECHERRY_DB_NAME
+          MYSQL_HOST: $MYSQL_HOST
+          BLUECHERRY_USERHOST: $BLUECHERRY_USERHOST
+          BLUECHERRY_GROUP_ID: $BLUECHERRY_GROUP_ID
+          BLUECHERRY_USER_ID: $BLUECHERRY_USER_ID
+    restart: unless-stopped
+    volumes:
+      - /mnt/security:/recordings
+#######################################################
+# Enable this only if you have a supported VAAPI device and /dev/dri exists on the host system.
+#    devices:
+#      - /dev/dri:/dev/dri
+#######################################################
+    ports:
+        - "7001:7001"
+        - "7002:7002"
+    depends_on:
+        - mysql
+
+networks:
+    default:
+        name: bluecherry_net
