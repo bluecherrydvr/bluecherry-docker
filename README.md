@@ -11,6 +11,13 @@ This installs the latest beta of Bluecherry server using a Ubuntu 18.04 docker i
 4. Build the bluecherry image with `docker-compose build`
 5. Start bluecherry with `docker-compose up -d bluecherry`
 
+# Enable GPU transcoding:
+
+If your host environment supports VAAPI (https://wiki.libav.org/Hardware/vaapi) AND you have /dev/dri you can enable GPU transcoding in docker-compose.yml by uncommenting this section:
+
+    #devices:
+    #  - /dev/dri:/dev/dri
+
 You should be able to access the bluecherry server interface on https://localhost:7001
 
 Bluecherry server documentation can be found at https://bluecherry-apps.readthedocs.io/en/latest/setup-configuration.html
