@@ -15,7 +15,7 @@ ARG BLUECHERRY_USER_ID
 ENV DEBIAN_FRONTEND=noninteractive
 ENV MYSQL_ADMIN_LOGIN=root
 ENV MYSQL_ADMIN_PASSWORD=oom1ieth2aeK
-ENV dbname=bluechery
+ENV dbname=bluecherry
 ENV host=mysql
 ENV userhost=%
 ENV user=bluecherry
