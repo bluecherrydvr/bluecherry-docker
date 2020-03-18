@@ -77,7 +77,7 @@ RUN /usr/sbin/groupadd -r -f -g $BLUECHERRY_GROUP_ID bluecherry && \
     apt-key add bluecherry.asc && \
     wget --no-check-certificate --output-document=/etc/apt/sources.list.d/bluecherry-bionic.list https://dl.bluecherrydvr.com/sources.list.d/bluecherry-bionic-unstable.list && \
     apt-get update && \
-    apt --no-install-recommends -y install mysql-client bluecherry
+    apt --no-install-recommends -y install rsyslog mysql-client bluecherry
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
