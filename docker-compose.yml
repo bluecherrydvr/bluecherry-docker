@@ -7,6 +7,8 @@ services:
     restart: always
     volumes:
         - ./db:/var/lib/mysql
+        - "/etc/timezone:/etc/timezone:ro"
+        - "/etc/localtime:/etc/localtime:ro"
     environment:
         MYSQL_ROOT_PASSWORD: $MYSQL_ADMIN_PASSWORD
         TZ: $TZ
