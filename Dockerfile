@@ -1,7 +1,7 @@
 #######################################################
 # set a base image with environment to build from
 #######################################################
-FROM ubuntu:18.04 AS scratch
+FROM ubuntu:20.04 AS scratch
 ARG MYSQL_HOST
 ARG MYSQL_ADMIN_LOGIN
 ARG MYSQL_ADMIN_PASSWORD
