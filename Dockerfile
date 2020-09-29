@@ -80,5 +80,8 @@ RUN /usr/sbin/groupadd -r -f -g $BLUECHERRY_GROUP_ID bluecherry && \
     apt --no-install-recommends -y install rsyslog mysql-client bluecherry
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+    RUN mkdir -p /var/lib/bluecherry/recordings && \
+	chmod 770 /var/lib/bluecherry/recordings && \
+        chown bluecherry.bluecherry /var/lib/bluecherry/recordings 
 
 CMD ["/usr/bin/supervisord"]
