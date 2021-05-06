@@ -1,3 +1,4 @@
-db
-recordings
-etc
+.env
+database/
+recordings/
+bluecherry.conf

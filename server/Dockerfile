@@ -1,0 +1,165 @@
+# set a base image with environment to build from
+FROM ubuntu:20.04 AS baseos
+
+ARG BLUECHERRY_GIT_BRANCH_TAG=v3.0.4
+
+
+# ---------------------------------------------------------------------------
+# Build the base OS with some development libs and tools
+FROM baseos AS os_dev_environment
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /root
+
+RUN apt-get update
+
+RUN apt-get install --no-install-recommends -y \
+            git sudo openssl ca-certificates wget gnupg gnupg2 gnupg1 \
+            ssl-cert nmap curl sysstat iproute2 \
+            autoconf automake libtool build-essential gcc g++ \
+            debhelper ccache bison flex texinfo yasm cmake
+
+RUN apt-get install --no-install-recommends -y \
+            libbsd-dev libopencv-dev libudev-dev libva-dev \
+            linux-image-generic linux-headers-generic \
+            libmysqlclient-dev rsyslog
+            
+
+# ---------------------------------------------------------------------------
+FROM os_dev_environment as bluecherry_base_environment
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /root
+
+RUN git clone --progress --depth 1 \
+    http://github.com/bluecherrydvr/bluecherry-apps.git \
+ && cd bluecherry-apps \
+ && git checkout $BLUECHERRY_GIT_BRANCH_TAG
+
+RUN apt-get --no-install-recommends -y install \
+        libbsd0 libc6 libgcc1 libssl1.1 libstdc++6 libudev1 \
+        zlib1g ucf mkvtoolnix v4l-utils vainfo i965-va-driver
+
+RUN apt-get --no-install-recommends -y install \
+        php-mail php-mail-mime php-net-smtp php-gd php-curl \
+        php-mysql php-sqlite3 \
+        apache2 libapache2-mod-php mysql-client sqlite3
+
+# ---------------------------------------------------------------------------
+# Build the bluecherry app and dependencies. This is done in a separate
+# image because there are many ways it can fail and then we save time
+# by being able to reuse prior containers leading up to this build.
+FROM bluecherry_base_environment as bluecherry_build
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /root
+
+COPY depends/onvif_tool bluecherry-apps/utils/onvif_tool
+
+RUN cd bluecherry-apps \
+ && ./scripts/build_pkg_native.sh
+
+
+# ---------------------------------------------------------------------------
+# Install the bluecherry app and dependencies
+FROM bluecherry_build as bluecherry_install
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /root
+
+ARG MYSQL_ADMIN_LOGIN=root
+ARG MYSQL_ADMIN_PASSWORD
+
+ARG BLUECHERRY_DB_USER=bluecherry
+ARG BLUECHERRY_DB_HOST=mysql
+ARG BLUECHERRY_DB_PASSWORD=bluecherry
+ARG BLUECHERRY_DB_NAME=bluecherry
+ARG BLUECHERRY_DB_ACCESS_HOST=%
+
+ARG BLUECHERRY_LINUX_GROUP_NAME=bluecherry
+ARG BLUECHERRY_LINUX_GROUP_ID=1000
+ARG BLUECHERRY_LINUX_USER_NAME=bluecherry
+ARG BLUECHERRY_LINUX_USER_ID=1000
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+ENV MYSQL_ADMIN_LOGIN=${MYSQL_ADMIN_LOGIN}
+ENV MYSQL_ADMIN_PASSWORD=${MYSQL_ADMIN_PASSWORD}
+
+ENV BLUECHERRY_DB_ACCESS_HOST=${BLUECHERRY_DB_ACCESS_HOST}
+ENV BLUECHERRY_DB_HOST=${BLUECHERRY_DB_HOST}
+ENV BLUECHERRY_DB_NAME=${BLUECHERRY_DB_NAME}
+ENV BLUECHERRY_DB_USER=${BLUECHERRY_DB_USER}
+ENV BLUECHERRY_DB_PASSWORD=${BLUECHERRY_DB_PASSWORD}
+
+ENV BLUECHERRY_LINUX_GROUP_NAME=${BLUECHERRY_LINUX_GROUP_NAME}
+ENV BLUECHERRY_LINUX_GROUP_ID=${BLUECHERRY_LINUX_GROUP_ID}
+ENV BLUECHERRY_LINUX_USER_NAME=${BLUECHERRY_LINUX_USER_NAME}
+ENV BLUECHERRY_LINUX_USER_ID=${BLUECHERRY_LINUX_USER_ID}
+
+
+RUN { \
+        echo "[client]";                        \
+        echo "user=$MYSQL_ADMIN_LOGIN";         \
+        echo "password=$MYSQL_ADMIN_PASSWORD";  \
+        echo "[mysql]";                         \
+        echo "user=$MYSQL_ADMIN_LOGIN";         \
+        echo "password=$MYSQL_ADMIN_PASSWORD";  \
+        echo "[mysqldump]";                     \
+        echo "user=$MYSQL_ADMIN_LOGIN";         \
+        echo "password=$MYSQL_ADMIN_PASSWORD";  \
+        echo "[mysqldiff]";                     \
+        echo "user=$MYSQL_ADMIN_LOGIN";         \
+        echo "password=$MYSQL_ADMIN_PASSWORD";  \
+    } > /root/.my.cnf
+
+# This step is needed if/when building a new bluecherry docker container
+# that will connect to an existing bluecherry database. In this case, the
+# bluecherry installer will see the existing database, and it needs the
+# /etc/bluecherry.conf file to tell it that it is okay to connect to (and
+# modify) that database
+#
+# COPY bluecherry.conf /etc/bluecherry.conf
+
+# NOTE: The line "export host=$BLUECHERRY_DB_HOST" ... This is required 
+# due to a weird global check of this env var by the "check_mysql_admin"
+# function in /usr/share/bluecherry/bc_db_tool.sh ... which doesn't accept
+# the db host as an argument like most of the other functions in that file.
+# --- The Specific problem line is:
+# if ! echo "show databases" | mysql_wrapper -h"${host}" -u"$MYSQL_ADMIN_LOGIN" &>/dev/null
+#
+RUN { \
+        echo bluecherry bluecherry/mysql_admin_login string $MYSQL_ADMIN_LOGIN; \
+        echo bluecherry bluecherry/mysql_admin_password password $MYSQL_ADMIN_PASSWORD; \
+        echo bluecherry bluecherry/db_host string $BLUECHERRY_DB_HOST; \
+        echo bluecherry bluecherry/db_userhost string $BLUECHERRY_DB_ACCESS_HOST; \
+        echo bluecherry bluecherry/db_name string $BLUECHERRY_DB_NAME; \
+        echo bluecherry bluecherry/db_user string $BLUECHERRY_DB_USER; \
+        echo bluecherry bluecherry/db_password password $BLUECHERRY_DB_PASSWORD; \
+    } | debconf-set-selections \
+ && export host=$BLUECHERRY_DB_HOST \
+ && dpkg -i bluecherry-apps/releases/bluecherry_*.deb \
+ && rm bluecherry-apps/releases/bluecherry_*.deb \
+ && rm -rf /var/lib/apt/lists/*
+
+# When running rsyslog in a container, we need to disable imklog
+# since the in-container process won't be allowed access to it.
+RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
+
+RUN /usr/sbin/groupadd -rf \
+    --gid=$BLUECHERRY_LINUX_GROUP_ID \
+    $BLUECHERRY_LINUX_GROUP_NAME \
+ && /usr/sbin/useradd -rm \
+    --comment "Bluecherry DVR" \
+    --home-dir=/var/lib/bluecherry \
+    --gid=$BLUECHERRY_LINUX_GROUP_NAME \
+    --groups=audio,video \
+    --uid=$BLUECHERRY_LINUX_USER_ID \
+    $BLUECHERRY_LINUX_USER_NAME \
+ || echo "bluecherry user already exists"
+
+RUN mkdir /recordings \
+ && chown bluecherry:bluecherry /recordings
+
+EXPOSE 7001/tcp 7002/tcp 554/tcp 554/udp
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+CMD "/entrypoint.sh"
