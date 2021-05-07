@@ -1,0 +1,48 @@
+# Example .env file that can be used with docker or docker-compose to inject
+# the correct config values into the mysql and bluecherry containers
+#
+# To use this file, you must rename it from "dotenv" to ".env" and place it
+# in this same (base) directory- the same directory where "docker-compose.yml"
+# is located.
+#
+# !!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!
+# It is recommended to change at least the password values for use in a
+# production environment! Don't reuse our generic example passwords!
+#
+
+# Set to your desired timezone. See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+TZ=America/Chicago
+
+# Used by bluecherry to login to the MYSQL server
+MYSQL_ADMIN_LOGIN=root
+
+# Used by bluecherry as the password for the root account to create databases
+MYSQL_ADMIN_PASSWORD=oom1ieth2aeK
+
+# Name of the MYSQL host. This is usually the name of the service in docker-compose.yml
+MYSQL_HOST=mysql
+
+BLUECHERRY_DB_HOST=mysql
+
+# Creates a user used by bluecherry and grants permission to the database.
+BLUECHERRY_DB_USER=bluecherry
+
+# Password for above user.
+BLUECHERRY_DB_PASSWORD=rohche6PieWi
+
+# Database name for the bluecherry database. Will delete if it exists.
+BLUECHERRY_DB_NAME=bluecherry
+
+# Grants access to the bluecherry user at this hostmask. This should be the IP of your bluecherry
+# container. Examples:
+#   192.168.0.% - allows access from any IP on the 192.168.0.xxx range
+#   %.example.com - allows access to anyone from the example.com domain
+#   192.168.1.0/255.255.255.0 - allows from any IP in 192.168.1.xxx range
+BLUECHERRY_USERHOST=%
+
+# UID/GID to run bluecherry user as. If you want to access recordings from the host, it is
+# recommended to set them the same as a user/group that you want access to read it.
+# run `id $(whoami)` to find the UID/GID of your user
+BLUECHERRY_GROUP_ID=1000
+BLUECHERRY_USER_ID=1000
+
