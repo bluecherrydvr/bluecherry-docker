@@ -58,41 +58,40 @@ RUN cd bluecherry-apps \
 
 
 # ---------------------------------------------------------------------------
+FROM bluecherry_build as bluecherry_build_cleaned
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /root
+
+RUN rm -rf /usr/src/linux-headers-*
+
+RUN rm -rf .ccache \
+ && rm -rf bluecherry-apps/.git \
+ && rm -rf bluecherry-apps/misc/libav \
+ && rm -rf bluecherry-apps/misc/libconfig \
+ && rm -rf bluecherry-apps/misc/pugixml \
+ 
+
+# ---------------------------------------------------------------------------
 # Install the bluecherry app and dependencies
-FROM bluecherry_build as bluecherry_install
+FROM bluecherry_build_cleaned as bluecherry_install
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
 ARG MYSQL_ADMIN_LOGIN=root
 ARG MYSQL_ADMIN_PASSWORD
 
+# Specific database credentials used by bluecherry server
 ARG BLUECHERRY_DB_USER=bluecherry
 ARG BLUECHERRY_DB_HOST=mysql
 ARG BLUECHERRY_DB_PASSWORD=bluecherry
 ARG BLUECHERRY_DB_NAME=bluecherry
 ARG BLUECHERRY_DB_ACCESS_HOST=%
 
+# User and Group info used for running bluecherry server processes
 ARG BLUECHERRY_LINUX_GROUP_NAME=bluecherry
 ARG BLUECHERRY_LINUX_GROUP_ID=1000
 ARG BLUECHERRY_LINUX_USER_NAME=bluecherry
 ARG BLUECHERRY_LINUX_USER_ID=1000
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-ENV MYSQL_ADMIN_LOGIN=${MYSQL_ADMIN_LOGIN}
-ENV MYSQL_ADMIN_PASSWORD=${MYSQL_ADMIN_PASSWORD}
-
-ENV BLUECHERRY_DB_ACCESS_HOST=${BLUECHERRY_DB_ACCESS_HOST}
-ENV BLUECHERRY_DB_HOST=${BLUECHERRY_DB_HOST}
-ENV BLUECHERRY_DB_NAME=${BLUECHERRY_DB_NAME}
-ENV BLUECHERRY_DB_USER=${BLUECHERRY_DB_USER}
-ENV BLUECHERRY_DB_PASSWORD=${BLUECHERRY_DB_PASSWORD}
-
-ENV BLUECHERRY_LINUX_GROUP_NAME=${BLUECHERRY_LINUX_GROUP_NAME}
-ENV BLUECHERRY_LINUX_GROUP_ID=${BLUECHERRY_LINUX_GROUP_ID}
-ENV BLUECHERRY_LINUX_USER_NAME=${BLUECHERRY_LINUX_USER_NAME}
-ENV BLUECHERRY_LINUX_USER_ID=${BLUECHERRY_LINUX_USER_ID}
-
 
 RUN { \
         echo "[client]";                        \
@@ -115,7 +114,7 @@ RUN { \
 # /etc/bluecherry.conf file to tell it that it is okay to connect to (and
 # modify) that database
 #
-# COPY bluecherry.conf /etc/bluecherry.conf
+COPY bluecherry.conf /etc/bluecherry.conf
 
 # NOTE: The line "export host=$BLUECHERRY_DB_HOST" ... This is required 
 # due to a weird global check of this env var by the "check_mysql_admin"
@@ -138,6 +137,13 @@ RUN { \
  && rm bluecherry-apps/releases/bluecherry_*.deb \
  && rm -rf /var/lib/apt/lists/*
 
+# Remove these files -- we needed them to build the docker image, since the 
+# bluecherry installer scripts interact with the database. However, once the
+# image is created, we expect it to receive all of the settings/credentials
+# from environment variables passed in by docker or docker-compose.
+RUN rm -f /root/.my.cnf \
+ && rm -f /etc/bluecherry.conf
+
 # When running rsyslog in a container, we need to disable imklog
 # since the in-container process won't be allowed access to it.
 RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
@@ -159,7 +165,11 @@ RUN mkdir /recordings \
 
 EXPOSE 7001/tcp 7002/tcp 554/tcp 554/udp
 
+COPY bc-database-create.sh /bin/bc-database-create
+COPY bc-database-upgrade.sh /bin/bc-database-upgrade
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh \
+ && chmod +x /bin/bc-*
 
 CMD "/entrypoint.sh"

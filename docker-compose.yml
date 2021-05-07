@@ -38,7 +38,7 @@ services:
       - bluecherry_net
     volumes:
       - ./recordings:/var/lib/bluecherry/recordings
-      # - ./etc/bluecherry.conf:/etc/bluecherry.conf
+      # - ./server/bluecherry.conf:/etc/bluecherry.conf
     # Enable this only if you have a supported VAAPI device and /dev/dri exists on the host system.
     # devices:
     #   - /dev/dri:/dev/dri
@@ -47,6 +47,8 @@ services:
       - "7002:7002/tcp"
       - "554:554/tcp"
       - "554:554/udp"    
+    env_file:
+      - ./.env
     depends_on:
       - mysql
 
