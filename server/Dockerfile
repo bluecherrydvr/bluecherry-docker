@@ -68,14 +68,26 @@ RUN rm -rf .ccache \
  && rm -rf bluecherry-apps/.git \
  && rm -rf bluecherry-apps/misc/libav \
  && rm -rf bluecherry-apps/misc/libconfig \
- && rm -rf bluecherry-apps/misc/pugixml \
- 
+ && rm -rf bluecherry-apps/misc/pugixml
+
 
 # ---------------------------------------------------------------------------
 # Install the bluecherry app and dependencies
-FROM bluecherry_build_cleaned as bluecherry_install
+FROM baseos as bluecherry_install
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
+
+COPY --from=bluecherry_build_cleaned \
+    /root/bluecherry-apps/releases/bluecherry_*.deb \
+    /root/bluecherry-apps/releases/
+
+# This step is needed if/when building a new bluecherry docker container
+# that will connect to an existing bluecherry database. In this case, the
+# bluecherry installer will see the existing database, and it needs the
+# /etc/bluecherry.conf file to tell it that it is okay to connect to (and
+# modify) that database
+#
+COPY bluecherry.conf /etc/bluecherry.conf
 
 ARG MYSQL_ADMIN_LOGIN=root
 ARG MYSQL_ADMIN_PASSWORD
@@ -93,6 +105,11 @@ ARG BLUECHERRY_LINUX_GROUP_ID=1000
 ARG BLUECHERRY_LINUX_USER_NAME=bluecherry
 ARG BLUECHERRY_LINUX_USER_ID=1000
 
+RUN apt-get update \
+ && apt-get install -y \
+        rsyslog nmap curl sysstat iproute2 \
+        openssl ca-certificates ssl-cert gnupg gnupg2 gnupg1
+
 RUN { \
         echo "[client]";                        \
         echo "user=$MYSQL_ADMIN_LOGIN";         \
@@ -107,14 +124,6 @@ RUN { \
         echo "user=$MYSQL_ADMIN_LOGIN";         \
         echo "password=$MYSQL_ADMIN_PASSWORD";  \
     } > /root/.my.cnf
-
-# This step is needed if/when building a new bluecherry docker container
-# that will connect to an existing bluecherry database. In this case, the
-# bluecherry installer will see the existing database, and it needs the
-# /etc/bluecherry.conf file to tell it that it is okay to connect to (and
-# modify) that database
-#
-COPY bluecherry.conf /etc/bluecherry.conf
 
 # NOTE: The line "export host=$BLUECHERRY_DB_HOST" ... This is required 
 # due to a weird global check of this env var by the "check_mysql_admin"
@@ -133,8 +142,11 @@ RUN { \
         echo bluecherry bluecherry/db_password password $BLUECHERRY_DB_PASSWORD; \
     } | debconf-set-selections \
  && export host=$BLUECHERRY_DB_HOST \
- && dpkg -i bluecherry-apps/releases/bluecherry_*.deb \
- && rm bluecherry-apps/releases/bluecherry_*.deb \
+ && apt install -y ./bluecherry-apps/releases/bluecherry_*.deb
+
+# Cleanup tasks
+RUN apt-get clean \
+ && rm -f bluecherry-apps/releases/bluecherry_*.deb \
  && rm -rf /var/lib/apt/lists/*
 
 # Remove these files -- we needed them to build the docker image, since the 
@@ -170,6 +182,6 @@ COPY bc-database-upgrade.sh /bin/bc-database-upgrade
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh \
- && chmod +x /bin/bc-*
+ && chmod +x /bin/bc-database-*
 
 CMD "/entrypoint.sh"
