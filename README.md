@@ -26,7 +26,7 @@ This repository includes a docker-compose.yml file, which makes it easier to man
 
 _Note: These steps are intended to work in a command line terminal of a Linux or macOS system._
 
-1. Ensure **docker** and optionally **docker-compose** are installed on the host system.
+1. Ensure `docker` and optionally `docker-compose` are installed on the host system.
 2. Clone this repo:  `git clone https://github.com/sicada/bluecherry-docker/`
 3. Change into the repo's directory:  `cd bluecherry-docker`
 4. Pull the images from dockerhub
@@ -36,25 +36,29 @@ _Note: These steps are intended to work in a command line terminal of a Linux or
 5. Add a .env file that contains the necessary config info. You can use the included file named **dotenv** as a template:
     1. Copy the template:  `cp dotenv .env`
     2. Edit the values as needed using a graphical text editor or e.g.:  `nano .env`
-    3. **WARNING:** It is recommended to change at least the password values for use in a production environment!
-    4. Save the .env file and don't share your login credentials with the Internet!
+    3. Save the .env file and don't share your login credentials with the Internet!
+    4. **_WARNING: Change the default password values for use in a production environment!_**
 
 
 ### Running For the First Time
-5. Start the mysql container and let it initialize: `sudo docker-compose up mysql`
-6. After the mysql setup is done, stop the container by pressing CTRL+C
-7. Start the mysql container in the background: `sudo docker-compose up -d mysql`
-8. Run the bluecherry-server container with a special command to setup the database: `sudo docker-compose run bluecherry bc-database-create`
-9. Run the bluecherry-server normally: `sudo docker-compose up -d bc-server`
-10. You should now be able to access the bluecherry web interface at https://localhost:7001/
+
+1. Start the mysql container and let it initialize: `sudo docker-compose up mysql`
+2. After the mysql setup is done, stop the container by pressing CTRL+C
+3. Start the mysql container in the background: `sudo docker-compose up -d mysql`
+4. Run the bluecherry-server container with a special command to setup the database: `sudo docker-compose run bluecherry bc-database-create`
+5. Run the bluecherry-server normally: `sudo docker-compose up -d bc-server`
+6. You should now be able to access the bluecherry web interface at https://localhost:7001/
 
 ### Running with an existing database
-5. Start the mysql container in the background: `sudo docker-compose up -d mysql`
-6. Run the bluecherry-server container with a special command to upgrade the database: `sudo docker-compose run bluecherry bc-database-upgrade`
-7. Run the bluecherry-server normally: `sudo docker-compose up -d bc-server`
-8. You should now be able to access the bluecherry web interface at https://localhost:7001/
 
-## Enable GPU transcoding
+1. Start the mysql container in the background: `sudo docker-compose up -d mysql`
+2. Run the bluecherry-server container with a special command to upgrade the database: `sudo docker-compose run bluecherry bc-database-upgrade`
+3. Run the bluecherry-server normally: `sudo docker-compose up -d bc-server`
+4. You should now be able to access the bluecherry web interface at https://localhost:7001/
+
+## Advanced Usage
+
+### Enable GPU transcoding
 
 If your host environment supports VAAPI (https://wiki.libav.org/Hardware/vaapi) AND you have a /dev/dri entry on the host machine (for Linux) you can enable GPU transcoding in docker-compose.yml by uncommenting this section:
 
@@ -63,9 +67,11 @@ If your host environment supports VAAPI (https://wiki.libav.org/Hardware/vaapi) 
 
 ## Debugging
 
-To view logs from the Bluecherry server, you **can't** use the typical `docker logs` or ` docker-compose logs` facilities, since bluecherry's main server process uses rsyslog to handle its logs. Most bluecherry server logs are placed in the container in /var/log/bluecherry.log . 
+### Log Files
 
-### Reading the Bluecherry Log File
+To view logs from the Bluecherry server, you can use the typical `docker logs` or `docker-compose logs` facilities from the host machine. However, it may be useful to inspect the server logs directly from within the container... the subsections below show one method to do so.
+
+#### Reading the Bluecherry Log File
 To view the bluecherry.log file, you can run a `tail` command inside the running bluecherry docker container like so: 
 
 `sudo docker exec -it bc-server /bin/bash -c "tail -f /var/log/bluecherry.log"`
