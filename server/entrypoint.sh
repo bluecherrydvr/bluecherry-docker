@@ -31,11 +31,11 @@ echo "> Writing /etc/bluecherry.conf"
   echo "    {"; \
   echo "        # 0 = sqlite, 1 = pgsql, 2 = mysql"; \
   echo "        type = 2;"; \
-  echo "        dbname = \"bluecherry\";"; \
-  echo "        user = \"bluecherry\";"; \
-  echo "        password = \"rohche6PieWi\";"; \
-  echo "        host = \"mysql\";"; \
-  echo "        userhost = \"%\";"; \
+  echo "        dbname = \"$BLUECHERRY_DB_NAME\";"; \
+  echo "        user = \"$BLUECHERRY_DB_USER\";"; \
+  echo "        password = \"$BLUECHERRY_DB_PASSWORD\";"; \
+  echo "        host = \"$BLUECHERRY_DB_HOST\";"; \
+  echo "        userhost = \"$BLUECHERRY_DB_ACCESS_HOST\";"; \
   echo "    };"; \
   echo "};"; \
 } > /etc/bluecherry.conf
