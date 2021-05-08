@@ -1,27 +1,46 @@
 # Bluecherry Server Docker Source
 
-This repository contains the files required to build a docker image for the Bluecherry NVR Server (https://www.bluecherrydvr.com). Work in this repository is based off work by rayzorben (https://github.com/rayzorben/bluecherry-docker) and Sicada Co. (https://github.com/sicada/bluecherry-docker/).
+This repository contains the files required to build a docker image for the [Bluecherry Network Video Recorder](https://www.bluecherrydvr.com) Server Application and its immediate dependencies. Work in this repository is based off work by:
+- [Bluecherry](https://github.com/bluecherrydvr/)
+- [rayzorben](https://github.com/rayzorben/bluecherry-docker)
+- [Sicada Co.](https://github.com/sicada/bluecherry-docker/)
 
 ## Versions
 
-The included Dockerfile generates an image based on an **Ubuntu 20.04** docker image. The latest tagged version of the **Bluecherry Server v3.x.x** from the source repository at https://github.com/bluecherrydvr/bluecherry-apps. The included docker-compose file uses **MySQL version 8.x.x** to host the bluecherry database. 
+The included Dockerfile generates an image based on an **Ubuntu 20.04** docker image. The latest tagged version of the **Bluecherry Server v3.x.x** from the [bluecherry-apps](https://github.com/bluecherrydvr/bluecherry-apps) source repository. The included docker-compose file uses **MySQL version 8.x.x** to host the bluecherry database. 
 
 The current version of this docker code intends to build a bluecherry docker image that is as small as possible, and which does *not* bake in any configuration into the image (since docker images are intended to be ephemeral).
 
 Instead, needed configuration parameters such as database and server passwords are passed into the docker container via environment variables. Environment variables are defined and passed using typical methods with `docker` or `docker-compose` commands.
 
-## Install / Usage
+## Initialization and Usage
 
-For most use cases, rebuilding of the docker image is not necessary. Instead, you may pull a prebuilt image from the dockerhub repo at https://hub.docker.com/repository/docker/sicadaco/bluecherry-server/ . 
-**Note:** The prebuilt image is currently about 1 GB in size.
+### Building vs Pre-Built Image
+For most use cases, rebuilding of the bluecherry-server docker image is **not** necessary. Instead, you may pull a prebuilt image from the dockerhub repo at [sicadaco/bluecherry-server:latest](https://hub.docker.com/repository/docker/sicadaco/bluecherry-server/). 
 
-This repo includes a docker-compose.yml file, which makes it easier to manage and run both the bluecherry-server and mysql database containers. The process to "pull and run" the bluecherry server would then one of the following:
+The prebuilt image is currently about 1 GB in size. If you choose to build your own docker image, be aware that it is a disk space and time intensive process. A full build will take on the order of 15 to 45 minutes and use up to about 10 GB of disk space.
 
-### Installation / Running with a new (no existing) database
-1. Clone this repo: `git clone https://github.com/sicada/bluecherry-docker/`
-2. Change into the repo's directory: `cd bluecherry-docker`
-3. Pull the images from dockerhub: `sudo docker-compose pull`
-4. Add a .env file that contains the necessary passwords/config info. You can use the file named **dotenv** as a template, but must rename it to the literal name **.env** in the same directory. **WARNING:** It is recommended to change at least the password values for use in a production environment!
+This repository includes a docker-compose.yml file, which makes it easier to manage and run both the bluecherry-server and mysql database containers by using **docker-compose** to manage the containers. However, the containers can of course be used directly with **docker** as well, though this is more difficult and therefore not recommended.
+
+### Prerequisites / First Steps
+
+_Note: These steps are intended to work in a command line terminal of a Linux or macOS system._
+
+1. Ensure **docker** and optionally **docker-compose** are installed on the host system.
+2. Clone this repo:  `git clone https://github.com/sicada/bluecherry-docker/`
+3. Change into the repo's directory:  `cd bluecherry-docker`
+4. Pull the images from dockerhub
+    1. Using docker-compose (pulls both bluecherry and mysql):  `sudo docker-compose pull`
+    2. Using docker (pull bluecherry):  `sudo docker pull sicadaco/bluecherry-server:latest`
+    3. Using docker (pull mysql):  `sudo docker pull mysql:latest`
+5. Add a .env file that contains the necessary config info. You can use the included file named **dotenv** as a template:
+    1. Copy the template:  `cp dotenv .env`
+    2. Edit the values as needed using a graphical text editor or e.g.:  `nano .env`
+    3. **WARNING:** It is recommended to change at least the password values for use in a production environment!
+    4. Save the .env file and don't share your login credentials with the Internet!
+
+
+### Running For the First Time
 5. Start the mysql container and let it initialize: `sudo docker-compose up mysql`
 6. After the mysql setup is done, stop the container by pressing CTRL+C
 7. Start the mysql container in the background: `sudo docker-compose up -d mysql`
@@ -30,10 +49,6 @@ This repo includes a docker-compose.yml file, which makes it easier to manage an
 10. You should now be able to access the bluecherry web interface at https://localhost:7001/
 
 ### Running with an existing database
-1. Clone this repo: `git clone https://github.com/sicada/bluecherry-docker/`
-2. Change into the repo's directory: `cd bluecherry-docker`
-3. Pull the images from dockerhub: `sudo docker-compose pull`
-4. Add a .env file that contains the necessary passwords/config info. You can use the file named **dotenv** as a template, but must rename it to the literal name **.env** in the same directory. **WARNING:** It is recommended to change at least the password values for use in a production environment!
 5. Start the mysql container in the background: `sudo docker-compose up -d mysql`
 6. Run the bluecherry-server container with a special command to upgrade the database: `sudo docker-compose run bluecherry bc-database-upgrade`
 7. Run the bluecherry-server normally: `sudo docker-compose up -d bc-server`
