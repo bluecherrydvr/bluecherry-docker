@@ -44,6 +44,13 @@ echo "> chown bluecherry:bluecherry /var/lib/bluecherry/recordings"
 chown bluecherry:bluecherry /var/lib/bluecherry/recordings
 
 
+# The bluecherry container's Dockerfile sets rsyslog to route the bluecherry
+# server's main log file to STDOUT for process #1, which then gets picked up
+# by docker (so its messages get routed out through docker logs, etc.), but
+# the location permissions have to be reset on every start of the container:
+chmod 777 /proc/self/fd/1
+
+
 echo "> /usr/sbin/rsyslogd"
 /usr/sbin/rsyslogd
 status=$?

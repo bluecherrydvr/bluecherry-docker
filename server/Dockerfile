@@ -177,11 +177,29 @@ RUN mkdir /recordings \
 
 EXPOSE 7001/tcp 7002/tcp 554/tcp 554/udp
 
-COPY bc-database-create.sh /bin/bc-database-create
-COPY bc-database-upgrade.sh /bin/bc-database-upgrade
+# This is the main script that runs as process ID 1 in the docker container
 COPY entrypoint.sh /entrypoint.sh
 
+# These scripts are wrappers used to manage the bluecherry database. They are
+# necessary because the bluecherry installer usually sets up the database, but
+# with a pre-built docker image the installer isn't run (so these actions have
+# to be done manually as needed from the docker container... example usage 
+# from the docker host looks like:
+#
+# --- CREATE:    sudo docker-compose run bluecherry bc-database-create
+# --- UPGRADE:   sudo docker-compose run bluecherry bc-database-upgrade
+COPY bc-database-create.sh /bin/bc-database-create
+COPY bc-database-upgrade.sh /bin/bc-database-upgrade
+
+# This copies in a modified rsyslog config, which tells rsyslog to route
+# bluecherry logs to both /var/log/bluecherry.log (within the container) and
+# also to the STDOUT of container process with PID 1, which then allows the
+# logs to be received by the docker engine (and read via `docker logs` , etc.)
+COPY bc-rsyslog.conf /etc/rsyslog.d/10-bluecherry.conf
+
+# Make the previously copied scripts executable
 RUN chmod +x /entrypoint.sh \
- && chmod +x /bin/bc-database-*
+ && chmod +x /bin/bc-database-create \
+ && chmod +x /bin/bc-database-upgrade
 
 CMD "/entrypoint.sh"
