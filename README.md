@@ -113,4 +113,4 @@ An example process list (ps) output from a running bluecherry docker container i
 
 ## More Info
 
-Bluecherry server documentation can be found at https://bluecherry-apps.readthedocs.io/en/latest/setup-configuration.html
+Bluecherry server documentation can be found at https://docs.bluecherrydvr.com
