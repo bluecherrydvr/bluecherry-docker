@@ -46,14 +46,14 @@ _Note: These steps are intended to work in a command line terminal of a Linux or
 2. After the mysql setup is done, stop the container by pressing CTRL+C
 3. Start the mysql container in the background: `sudo docker-compose up -d mysql`
 4. Run the bluecherry-server container with a special command to setup the database: `sudo docker-compose run bluecherry bc-database-create`
-5. Run the bluecherry-server normally: `sudo docker-compose up -d bc-server`
+5. Run the bluecherry-server normally: `sudo docker-compose up -d bluecherry`
 6. You should now be able to access the bluecherry web interface at https://localhost:7001/
 
 ### Running with an existing database
 
 1. Start the mysql container in the background: `sudo docker-compose up -d mysql`
-2. Run the bluecherry-server container with a special command to upgrade the database: `sudo docker-compose run bluecherry bc-database-upgrade`
-3. Run the bluecherry-server normally: `sudo docker-compose up -d bc-server`
+2. Run the bluecherry-server container with a special command to upgrade the database: `sudo docker-compose run bluecherry bc-database-upgrade` _Note: This only needs to be done once after using a newer version of bluecherry-server for the first time with an existing database._
+3. Run the bluecherry-server normally: `sudo docker-compose up -d bluecherry`
 4. You should now be able to access the bluecherry web interface at https://localhost:7001/
 
 ## Advanced Usage
