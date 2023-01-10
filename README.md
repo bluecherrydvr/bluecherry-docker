@@ -1,3 +1,6 @@
+# Due to restrictions in the current version 3 code base Docker installations are not currently supported.  Please install Bluecherry in a VM / LXC container / bare metal.
+
+
 # Bluecherry Server Docker Source
 
 This repository contains the files required to build a docker image for the [Bluecherry Network Video Recorder](https://www.bluecherrydvr.com) Server Application and its immediate dependencies. Work in this repository is based off work by:
