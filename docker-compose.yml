@@ -52,6 +52,38 @@ services:
     depends_on:
       - bc-mysql
 
+  mta_mailer:
+      container_name: bc-mail
+      cap_add:
+        - NET_BIND_SERVICE
+      image: juanluisbaptiste/postfix:latest
+# We assume bc-mail is only used by Bluecherry apps and not something else on the network
+#      expose:
+#        - "25"
+      dns:
+         - 8.8.8.8
+      ports:
+        - "25:25/tcp"
+      env_file:
+        - .mailenv
+      restart: always
+      networks:
+      - bluecherry_net
+      volumes:
+        - "/etc/localtime:/etc/localtime:ro"
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    volumes:
+      - ./uptime-kuma-data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "1337:3001"
+    networks:
+     - bluecherry_net
+    restart: always      
+
 networks:
   bluecherry_net:
     name: bluecherry_net
