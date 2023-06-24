@@ -1,0 +1,8 @@
+# More variables can be obtained from https://github.com/juanluisbaptiste/docker-postfix#how-to-run-it
+
+SMTP_USERNAME=
+SMTP_PASSWORD=
+SMTP_SERVER=
+SMTP_PORT=
+SERVER_HOSTNAME=
+ALWAYS_ADD_MISSING_HEADERS=
