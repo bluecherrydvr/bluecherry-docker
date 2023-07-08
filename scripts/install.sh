@@ -40,13 +40,14 @@ cp $workingpath/bluecherry-docker/mailenv-example $workingpath/bluecherry-docker
 docker compose pull
 docker compose up bc-mysql -d
 
-echo "Sleeping 45 seconds to make sure the database is initialized correctly...\n\n"
-
+echo "Sleeping 45 seconds to make sure the database is initialized correctly..."
+echo "\n\n"
 sleep 45
 docker compose stop bc-mysql
 docker compose up -d bc-mysql
 
-echo "Sleeping another 15 seconds to run the database creation scripts...\n\n"
+echo "Sleeping another 15 seconds to run the database creation scripts..."
+echo "\n\n"
 
 sleep 15
 docker compose run bluecherry bc-database-create
