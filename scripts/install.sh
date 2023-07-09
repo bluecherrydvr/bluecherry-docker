@@ -65,6 +65,7 @@ done
 
 configure_env() {
 
+echo "\n\n******************************************************************\n\n"
 echo "You will be asked the following to configure the docker container:
 
 Time Zone (formatted like this - See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
@@ -76,7 +77,7 @@ echo "Time Zone (i.e. - America/Chicago): "
 read timezone
 
 #read -p "Time Zone (i.e. - America/Chicago)：" timezone
-timezoneset="${timezone:=American/Chicago}"
+#timezoneset="${timezone:=American/Chicago}"
 read -p "Please provide a mysql admin password：" mysqladminpass
 read -p "Please provide a mysql bluecherry password：" mysqlbluecherrypass
 
@@ -120,6 +121,30 @@ BLUECHERRY_GROUP_ID=1000
 BLUECHERRY_USER_ID=1000
 
 " > bluecherry-docker/.bc-server_env
+
+echo "
+
+# Bluecherry configuration file
+
+# Used to be sure we don't use configurations not suitable for us
+version = "1.0";
+
+bluecherry:
+{
+  db:
+  {
+    # 0 = sqlite, 1 = pgsql, 2 = mysql
+    type = 2;
+    dbname = "bluecherry";
+    user = "bluecherry";
+    password = "bluecherry";
+    host = "localhost";
+    userhost = "localhost";
+    };
+};
+
+
+" > bluecherry-docker/config/bluecherry.conf
 
 }
 
@@ -331,77 +356,20 @@ uptimekuma() {
 
 echo "Installing Uptime Kuma for monitoring of Bluecherry services\n\n"
 
-DOWNLOAD_URL='https://github.com/louislam/uptime-kuma/releases/download/1.21.3/dist.tar.gz'
+	DOWNLOAD_URL='https://github.com/louislam/uptime-kuma/releases/download/1.21.3/dist.tar.gz'
 
-cd "$workingpath/bluecherry-docker || exit 1
-wget "${DOWNLOAD_URL}"
-tar -zxf "$workingpath/dist.tar.gz" -C "$workingpath"
+	cd "$workingpath/bluecherry-docker" || exit 1
 
-}
+		wget "${DOWNLOAD_URL}"
+		tar -zxf "$workingpath/dist.tar.gz" -C "$workingpath"
+
+
 
 echo "Installing Uptime Kuma for monitoring of Bluecherry services\n\n"
 
 cd bluecherry-docker
 wget https://github.com/louislam/uptime-kuma/releases/download/1.21.3/dist.tar.gz
 tar -xvf dist.tar.gz
-
-#workingpath
-
-configure_env() {
-
-#echo "You will be asked the following to configure the docker container:
-
-
-echo "Time Zone (i.e. - America/Chicago): "
-read timezone
-
-#read -p "Time Zone (i.e. - America/Chicago)：" timezone
-timezoneset="${timezone:=American/Chicago}"
-read -p "Please provide a mysql admin password：" mysqladminpass
-read -p "Please provide a mysql bluecherry password：" mysqlbluecherrypass
-
-
-# Install variables
-echo "
-# Set to your desired timezone. See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-TZ=$timezoneset
-
-# Used by bluecherry to login to the MYSQL server
-MYSQL_ADMIN_LOGIN=root
-
-# Used by bluecherry as the password for the root account to create databases
-MYSQL_ADMIN_PASSWORD=$mysqladminpass
-
-# Name of the MYSQL host. This is usually the name of the service in docker-compose.yml
-MYSQL_HOST=mysql
-
-BLUECHERRY_DB_HOST=mysql
-
-# Creates a user used by bluecherry and grants permission to the database.
-BLUECHERRY_DB_USER=bluecherry
-
-# Password for above user.
-BLUECHERRY_DB_PASSWORD=$mysqlbluecherrypass
-
-# Database name for the bluecherry database. Will delete if it exists.
-BLUECHERRY_DB_NAME=bluecherry
-
-# Grants access to the bluecherry user at this hostmask. This should be the IP of your bluecherry
-# container. Examples:
-#   192.168.0.% - allows access from any IP on the 192.168.0.xxx range
-#   %.example.com - allows access to anyone from the example.com domain
-#   192.168.1.0/255.255.255.0 - allows from any IP in 192.168.1.xxx range
-BLUECHERRY_USERHOST=%
-
-# UID/GID to run bluecherry user as. If you want to access recordings from the host, it is
-# recommended to set them the same as a user/group that you want access to read it.
-# run `id $(whoami)` to find the UID/GID of your user
-BLUECHERRY_GROUP_ID=1000
-BLUECHERRY_USER_ID=1000
-
-" > bluecherry-docker/.bc-server_env
-
-
 }
 
 read -p "Do you want to install docker and setup Bluecherry server? [y/n]: " answer
@@ -411,6 +379,7 @@ case $answer in
     y)
        install_docker
        install_bluecherry
+	   configure_env
        #clone_bluecherrydocker
         ;;
     n)
