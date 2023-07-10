@@ -120,7 +120,7 @@ BLUECHERRY_USERHOST=%
 BLUECHERRY_GROUP_ID=1000
 BLUECHERRY_USER_ID=1000
 
-" > bluecherry-docker/.bc-server_env
+" > bluecherry-docker/.env
 
 echo "
 
