@@ -52,13 +52,14 @@ echo "\n\n"
 sleep 15
 docker compose run bluecherry bc-database-create
 docker compose down
-for i in {1..50}; do
-    if docker compose pull; then
-        if docker compose up -d; then
-            break
-        fi
-    fi
+#for i in {1..50}; do
+#    if docker compose pull; then
+#        if docker compose up -d; then
+#            break
+#        fi
+#    fi
     sleep 10
+docker compose up -d
 done
 }
 
