@@ -121,31 +121,6 @@ BLUECHERRY_GROUP_ID=1000
 BLUECHERRY_USER_ID=1000
 
 " > bluecherry-docker/.env
-
-echo "
-
-# Bluecherry configuration file
-
-# Used to be sure we don't use configurations not suitable for us
-version = "1.0";
-
-bluecherry:
-{
-  db:
-  {
-    # 0 = sqlite, 1 = pgsql, 2 = mysql
-    type = 2;
-    dbname = "bluecherry";
-    user = "bluecherry";
-    password = "bluecherry";
-    host = "localhost";
-    userhost = "localhost";
-    };
-};
-
-
-" > bluecherry-docker/config/bluecherry.conf
-
 }
 
 
