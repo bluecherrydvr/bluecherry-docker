@@ -88,7 +88,7 @@ fi
 while sleep 15; do
   ps aux |grep rsyslog |grep -q -v grep
   PROCESS_1_STATUS=$?
-  ps aux |grep apache2 |grep -q -v grep
+  ps aux |grep nginx |grep -q -v grep
   PROCESS_2_STATUS=$?
   ps aux |grep bc-server |grep -q -v grep
   PROCESS_3_STATUS=$?
