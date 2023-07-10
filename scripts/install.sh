@@ -379,7 +379,7 @@ case $answer in
     y)
        install_docker
        install_bluecherry
-	   configure_env
+#	   configure_env
        #clone_bluecherrydocker
         ;;
     n)
@@ -394,6 +394,7 @@ read -p "Do you want to download and configure the Bluecherry docker images?  If
 case $clonedocker in
     y)
 clone_bluecherrydocker
+configure_env
 docker_compose_init
         ;;
     n)
