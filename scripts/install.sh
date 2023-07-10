@@ -94,9 +94,9 @@ MYSQL_ADMIN_LOGIN=root
 MYSQL_ADMIN_PASSWORD=$mysqladminpass
 
 # Name of the MYSQL host. This is usually the name of the service in docker-compose.yml
-MYSQL_HOST=mysql
+MYSQL_HOST=bc-mysql
 
-BLUECHERRY_DB_HOST=mysql
+BLUECHERRY_DB_HOST=bc-mysql
 
 # Creates a user used by bluecherry and grants permission to the database.
 BLUECHERRY_DB_USER=bluecherry
