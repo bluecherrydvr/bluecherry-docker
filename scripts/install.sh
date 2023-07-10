@@ -60,7 +60,7 @@ docker compose down
 #    fi
     sleep 10
 docker compose up -d
-done
+#done
 }
 
 
