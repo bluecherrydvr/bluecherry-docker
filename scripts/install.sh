@@ -234,6 +234,12 @@ cd "$workingpath"
 #cd bluecherry-server
 git clone https://github.com/bluecherrydvr/bluecherry-docker.git
 
+# Sigh...Fedora LXC containers and maybe others set max keys at 2000.  We need more.  For now more systems are needed to test on.
+# https://unix.stackexchange.com/questions/600968/disk-quota-exceeded-when-trying-to-deploy-docker-container-inside-lxc
+#echo 5000 | tee /proc/sys/kernel/keys/maxkeys
+#echo "kernel.keys.maxkeys=5000" >  /etc/sysctl.d/99-custom.conf
+
+
 #return 1
 fi
 
