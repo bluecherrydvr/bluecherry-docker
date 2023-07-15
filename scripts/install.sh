@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/sh
+set -e
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 
@@ -177,12 +178,12 @@ check_docker_processes() {
     echo
     echo "**********************************************************************"
   else
-    echo "\n\n\e[31mWARNING: Either bc-server or bc-mysql process is not running in Docker.  Below is a listing of the current bc-server and bc-mysql processes\e[0m\n\n"
-    echo "If you are unable to resolve this issue please visit the Bluecherry community at https://forums.bluecherrydvr.com\n\n"
-    echo "Below are statuses of the 'bc-server' and 'bc-mysql' containers:\n\n"
+    echo -e "\n\n\e[31mWARNING: Either bc-server or bc-mysql process is not running in Docker.  Below is a listing of the current bc-server and bc-mysql processes\e[0m\n\n"
+    echo -e "If you are unable to resolve this issue please visit the Bluecherry community at https://forums.bluecherrydvr.com\n\n"
+    echo -e "Below are statuses of the 'bc-server' and 'bc-mysql' containers:\n\n"
 check_process "bc-server"
 check_process "bc-mysql"
-    echo "\n\n"
+    echo -e "\n\n"
 
   fi
 }
@@ -242,7 +243,7 @@ fi
 
 install_bluecherry() {
 
-echo "\n\nInstalling Bluecherry.......\n\n"
+echo -e "\n\nInstalling Bluecherry.......\n\n"
 
 distribution=$(detect_distribution)
 
@@ -316,7 +317,7 @@ install_fedora_packages() {
 install_docker() {
 
     if command -v docker > /dev/null 2>&1; then
-        echo "\n\nDocker is installed....skipping!\n\n"
+        echo -e "\n\nDocker is installed....skipping!\n\n"
         return 0
 
     else
@@ -324,13 +325,15 @@ install_docker() {
 
  curl -fsSL https://get.docker.com -o /tmp/install-docker.sh
   sh /tmp/install-docker.sh
+  systemctl start docker
+  systemctl enable docker
     fi
 
 }
 
 uptimekuma() {
 
-echo "Installing Uptime Kuma for monitoring of Bluecherry services\n\n"
+echo -e "Installing Uptime Kuma for monitoring of Bluecherry services\n\n"
 
 	DOWNLOAD_URL='https://github.com/louislam/uptime-kuma/releases/download/1.21.3/dist.tar.gz'
 
@@ -341,7 +344,7 @@ echo "Installing Uptime Kuma for monitoring of Bluecherry services\n\n"
 
 
 
-echo "Installing Uptime Kuma for monitoring of Bluecherry services\n\n"
+echo -e "Installing Uptime Kuma for monitoring of Bluecherry services\n\n"
 
 cd bluecherry-docker
 wget https://github.com/louislam/uptime-kuma/releases/download/1.21.3/dist.tar.gz
@@ -394,7 +397,7 @@ case $smtp in
         echo "Invalid answer"
 esac
 
-echo "\nNote: NFS is typically recommended for external storage.  Read the Bluecherry docs for information on adding CIFS (smb) shares\n\n"
+echo -e "\nNote: NFS is typically recommended for external storage.  Read the Bluecherry docs for information on adding CIFS (smb) shares\n\n"
 
 
 read -p "Do you want to add a NFS mount? [y/n]: " add_nfs
