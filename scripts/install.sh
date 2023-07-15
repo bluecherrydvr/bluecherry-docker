@@ -234,7 +234,7 @@ cd "$workingpath"
 #cd bluecherry-server
 git clone https://github.com/bluecherrydvr/bluecherry-docker.git
 
-return 1
+#return 1
 fi
 
 }
