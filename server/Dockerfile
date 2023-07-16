@@ -39,7 +39,7 @@ WORKDIR /root
 #        zlib1g ucf mkvtoolnix v4l-utils vainfo i965-va-driver
 
 RUN apt install -y --no-install-recommends wget sudo gnupg
-RUN wget -q https://repo.mysql.com/RPM-GPG-KEY-mysql-2022 -O- | apt-key add -
+#RUN wget -q https://repo.mysql.com/RPM-GPG-KEY-mysql-2022 -O- | apt-key add -
 RUN apt update
 
 #RUN apt-get --no-install-recommends -y install \
@@ -282,7 +282,8 @@ RUN apt-get --no-install-recommends -y install \
 RUN apt-get --no-install-recommends -y install \
         php-mail php-mail-mime php-net-smtp php-gd php-curl \
         php-mysql php-sqlite3 \
-        apache2 libapache2-mod-php mysql-client sqlite3
+#        apache2 libapache2-mod-php mysql-client sqlite3
+	nginx default-mysql-client sqlite3
 
 # ---------------------------------------------------------------------------
 # Build the bluecherry app and dependencies. This is done in a separate
