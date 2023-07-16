@@ -94,7 +94,7 @@ RUN apt install --no-install-recommends -y libbsd0 libc6 libgcc-s1 libmariadb3 l
 
 
 #RUN wget https://unstable.bluecherrydvr.com/pool/focal/bluecherry_3.1.0-rc8_amd64.deb
-RUN curl -o /tmp/bluecherry_$BLUECHERRY_GIT_BRANCH_amd64.deb https://unstable.bluecherrydvr.com/pool/focal/bluecherry_$BLUECHERRY_GIT_BRANCH_TAG_amd64.deb
+RUN curl -o /tmp/bluecherry_3.1.0-rc8_amd64.deb https://unstable.bluecherrydvr.com/pool/focal/bluecherry_3.1.0-rc8_amd64.deb
 
 #COPY depends/bluecherry_3.1.0-rc8_amd64.deb /tmp/bluecherry_3.1.0-rc8_amd64.deb
 
@@ -176,8 +176,7 @@ RUN { \
     } | debconf-set-selections \
 # && export DB_HOST="mysql" \
 # && export HOST=mysql \
-&& dpkg -i /tmp/bluecherry_$BLUECHERRY_GIT_BRANCH_TAG_amd64.deb
-
+&& dpkg -i /tmp/bluecherry_3.1.0-rc8_amd64.deb
 
 
 
