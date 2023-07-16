@@ -38,7 +38,7 @@ WORKDIR /root
 #        libbsd0 libc6 libgcc1 libssl1.1 libstdc++6 libudev1 \
 #        zlib1g ucf mkvtoolnix v4l-utils vainfo i965-va-driver
 
-RUN apt install -y --no-install-recommends wget sudo gnugpg
+RUN apt install -y --no-install-recommends wget sudo gnupg
 RUN wget -q https://repo.mysql.com/RPM-GPG-KEY-mysql-2022 -O- | apt-key add -
 RUN apt update
 
