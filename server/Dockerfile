@@ -87,7 +87,7 @@ WORKDIR /root
 RUN apt update
 #RUN apt install --no-install-recommends -y wget mariadb-client libopencv-core libopencv-imgcodecs libopencv-imgproc libva-drm2 libva2 mkvtoolnix php-mail php-mail-mime \#
 #		php-net-smtp sqlite3 nginx php-fpm php-mysql php-sqlite3 v4l-utils vainfo i965-va-driver php-gd php-curl mariadb-client python3-pip python3-distutils gnupg2
-RUN apt install --no-install-recommends -y libbsd0 libc6 libgcc-s1 libmariadb3 libopencv-core4.5 libopencv-imgcodecs4.5 libopencv-imgproc4.5 curl \
+RUN apt install --no-install-recommends -y libbsd0 libc6 libgcc-s1 libmariadb3 libopencv-core4.2 libopencv-imgcodecs4.2 libopencv-imgproc4.2 curl \
 	libssl1.1 libstdc++6 libudev1 libva-drm2 libva2 zlib1g ssl-cert ucf curl sysstat mkvtoolnix php-mail \
 	php-mail-mime php-net-smtp sqlite3 nmap nginx php-fpm php-mysql php-sqlite3 v4l-utils vainfo i965-va-driver
 
