@@ -62,7 +62,7 @@ RUN apt update
 
 
 # ---------------------------------------------------------------------------
-FROM bluecherry_build as bluecherry_build_cleaned
+#FROM bluecherry_build as bluecherry_build_cleaned
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
