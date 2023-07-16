@@ -127,7 +127,7 @@ RUN apt-get update \
         wget sudo rsyslog nmap curl sysstat iproute2 \
         openssl ca-certificates ssl-cert gnupg gnupg2 gnupg1
 
-COPY my.cnf /root/.my.cnf
+#COPY my.cnf /root/.my.cnf
 
 #RUN { \
 #        echo "[client]";                        \
@@ -189,8 +189,8 @@ RUN apt-get clean \
 # bluecherry installer scripts interact with the database. However, once the
 # image is created, we expect it to receive all of the settings/credentials
 # from environment variables passed in by docker or docker-compose.
-RUN rm -f /root/.my.cnf \
- && rm -f /etc/bluecherry.conf
+#RUN rm -f /root/.my.cnf \
+RUN rm -f /etc/bluecherry.conf
 
 # When running rsyslog in a container, we need to disable imklog
 # since the in-container process won't be allowed access to it.
