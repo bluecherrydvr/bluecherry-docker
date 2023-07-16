@@ -55,7 +55,7 @@ RUN apt update
 #ENV DEBIAN_FRONTEND=noninteractive
 #WORKDIR /root
 
-COPY depends/onvif_tool bluecherry-apps/utils/onvif_tool
+#COPY depends/onvif_tool bluecherry-apps/utils/onvif_tool
 
 #RUN cd bluecherry-apps \
 # && ./scripts/build_pkg_native.sh
