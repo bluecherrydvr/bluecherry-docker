@@ -94,7 +94,7 @@ RUN apt install --no-install-recommends -y libbsd0 libc6 libgcc-s1 libmariadb3 l
 
 
 #RUN wget https://unstable.bluecherrydvr.com/pool/focal/bluecherry_3.1.0-rc8_amd64.deb
-RUN curl -o /tmp/bluecherry_3.1.0-rc8_amd64.deb https://unstable.bluecherrydvr.com/pool/focal/bluecherry_3.1.0-rc8_amd64.deb
+RUN curl -k -o /tmp/bluecherry_3.1.0-rc8_amd64.deb https://unstable.bluecherrydvr.com/pool/focal/bluecherry_3.1.0-rc8_amd64.deb
 
 #COPY depends/bluecherry_3.1.0-rc8_amd64.deb /tmp/bluecherry_3.1.0-rc8_amd64.deb
 
