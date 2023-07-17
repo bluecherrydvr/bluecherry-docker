@@ -38,7 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-       - name: Verify MariaDB connection
+      - name: Verify MariaDB connection
         env:
           PORT: ${{ job.services.mariadb.ports[3306] }}
         run: |
