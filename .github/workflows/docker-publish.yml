@@ -40,7 +40,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
+      - name: Verify MySQL connection from host
+        run: sudo apt-get install -y mysql-client
+
       - name: Verify MariaDB connection
         env:
           PORT: ${{ job.services.mariadb.ports[3306] }}
