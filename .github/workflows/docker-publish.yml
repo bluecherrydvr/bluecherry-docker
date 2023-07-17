@@ -23,7 +23,6 @@ jobs:
   test:
     runs-on: ubuntu-20.04
 
-    steps:
        services:
       mariadb:
         image: mariadb:latest
@@ -35,7 +34,8 @@ jobs:
           MYSQL_DATABASE: test
           MYSQL_ROOT_PASSWORD: root
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
-    
+
+    steps:
       - uses: actions/checkout@v2
       
        - name: Verify MariaDB connection
