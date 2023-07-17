@@ -23,7 +23,7 @@ jobs:
   test:
     runs-on: ubuntu-20.04
 
-       services:
+    services:
       mariadb:
         image: mariadb:latest
         ports:
