@@ -165,6 +165,8 @@ RUN apt-get update \
 # && export host=$BLUECHERRY_DB_HOST \
 # && dpkg -i /tmp/bluecherry_3.1.0-rc8_amd64.deb
 
+RUN apt install -y php-curl php-gd
+
 RUN { \
         echo bluecherry bluecherry/mysql_admin_login string $MYSQL_ADMIN_LOGIN; \
         echo bluecherry bluecherry/mysql_admin_password password $MYSQL_ADMIN_PASSWORD; \
