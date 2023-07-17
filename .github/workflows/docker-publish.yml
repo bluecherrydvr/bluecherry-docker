@@ -26,10 +26,11 @@ jobs:
     services:
       mariadb:
         image: mariadb:latest
-        options: >-
-          --health-cmd "mysqladmin ping -h localhost
+#        options: >-
+#          --health-cmd "mysqladmin ping -h localhost
         ports:
           - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10 
         env:
   #        MYSQL_USER: root
           MYSQL_PASSWORD: root
