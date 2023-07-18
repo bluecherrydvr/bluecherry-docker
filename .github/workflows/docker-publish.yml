@@ -74,7 +74,7 @@ jobs:
             docker-compose --file docker-compose.test.yml build
             docker-compose --file docker-compose.test.yml run sut
           else
-            echo "testing MYSQL connection..."\n\n && mysqladmin ping -h"127.0.0.1" -P"3306" -u root -proot --silent; do
+            echo -e "testing MYSQL connection..."\n\n && mysqladmin ping -h"127.0.0.1" -P"3306" -u root -proot ; echo $?
             docker build . --file server/Dockerfile
           fi
 
