@@ -40,6 +40,10 @@ jobs:
 
 
     steps:
+      - uses: actions/checkout@v2
+      - name: Verify MySQL connection from host
+        run: sudo apt-get install -y mysql-client
+        
       - uses: getong/mariadb-action@v1.1
         with:
  #        host port: 3800 # Optional, default value is 3306. The port of host
