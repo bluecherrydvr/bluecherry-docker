@@ -23,22 +23,35 @@ jobs:
   test:
     runs-on: ubuntu-20.04
 
-    services:
-      mariadb:
-        image: mariadb:latest
+ #   services:
+ #     mariadb:
+ #       image: mariadb:latest
 #        options: >-
 #          --health-cmd "mysqladmin ping -h localhost
-        ports:
-          - 3306
+ #       ports:
+ #         - 3306
   #      options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10 
-        env:
+  #      env:
   #        MYSQL_USER: root
-          MYSQL_PASSWORD: root
-          MYSQL_DATABASE: test
-          MYSQL_ROOT_PASSWORD: root
+  #        MYSQL_PASSWORD: root
+  #        MYSQL_DATABASE: test
+  #        MYSQL_ROOT_PASSWORD: root
 #        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
+
     steps:
+      - uses: getong/mariadb-action@v1.1
+        with:
+ #        host port: 3800 # Optional, default value is 3306. The port of host
+ #        container port: 3307 # Optional, default value is 3306. The port of container
+          character set server: 'utf8' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
+          collation server: 'utf8_general_ci' # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
+          mariadb version: '10.4.10' # Optional, default value is "latest". The version of the MariaDB
+  #       mysql database: 'some_test' # Optional, default value is "test". The specified database which will be create
+          mysql root password: 'root' # Required if "mysql user" is empty, default is empty. The root superuser password
+          mysql user: 'root' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
+          mysql password: 'root' # Required if "mysql user" exists. The password for the "mysql user"
+    
       - uses: actions/checkout@v2
       - name: Verify MySQL connection from host
         run: sudo apt-get install -y mysql-client
