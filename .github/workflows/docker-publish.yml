@@ -58,7 +58,8 @@ jobs:
     
       - uses: actions/checkout@v2
       - name: Verify MySQL connection from host
-        run: sudo apt-get install -y mysql-client
+        run: sudo apt-get install -y mysql-client && echo -e "Alert testing MYSQL connection..."\n\n && mysqladmin ping -h"127.0.0.1" -P"3306" -u root -proot
+
 
       - name: Verify MariaDB connection
         env:
