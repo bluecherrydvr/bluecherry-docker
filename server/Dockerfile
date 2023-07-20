@@ -22,7 +22,11 @@ RUN apt-get update
 #            libbsd-dev libopencv-dev libudev-dev libva-dev \
 #            linux-image-generic linux-headers-generic \
 #            libmysqlclient-dev rsyslog
-            
+
+CMD ["echo", "Testing mysql connection..."]
+
+RUN mysql -uroot -proot -e 'SELECT version()'
+     
 
 # ---------------------------------------------------------------------------
 FROM os_dev_environment as bluecherry_base_environment
