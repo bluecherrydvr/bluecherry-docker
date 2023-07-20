@@ -47,8 +47,8 @@ jobs:
          run: echo "::set-output name=gateway-address::$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.Gateway}}{{end}}' ${{ steps.mysql-service.outputs.container-id }})"
        - name: Check out Site Repository 📄
          uses: actions/checkout@v2
-       - name: Create .env file
-         run: cp .env.example .env
+      # - name: Create .env file
+      #   run: cp .env.example .env
        - name: Replace environment variables
          run: echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
 #                  sed -i 's/MYSQL_HOST.*/MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
