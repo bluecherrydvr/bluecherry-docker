@@ -25,6 +25,7 @@ RUN apt-get update
 
 CMD ["echo", "Testing mysql connection..."]
 
+RUN apt install -y mysql-client
 RUN mysql -uroot -proot -e 'SELECT version()'
      
 
