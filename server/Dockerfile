@@ -1,5 +1,5 @@
 # set a base image with environment to build from
-#FROM ubuntu:20.04 AS baseos
+FROM ubuntu:20.04 AS baseos
 
 ARG BLUECHERRY_GIT_BRANCH_TAG=v3.1.0-rc8
 
@@ -26,7 +26,7 @@ RUN apt-get update
 CMD ["echo", "Testing mysql connection..."]
 
 RUN apt install -y mysql-client
-RUN mysql -uroot -proot -e 'SELECT version()'
+RUN mysql -uroot -proot -h127.0.0.1 -P3306 -e 'SELECT version()'
      
 
 # ---------------------------------------------------------------------------
