@@ -3,6 +3,7 @@ FROM ubuntu:20.04 AS baseos
 
 ARG BLUECHERRY_GIT_BRANCH_TAG=v3.1.0-rc8
 
+RUN echo $MYSQL_HOST
 
 # ---------------------------------------------------------------------------
 # Build the base OS with some development libs and tools
