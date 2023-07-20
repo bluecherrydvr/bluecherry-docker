@@ -22,30 +22,45 @@ jobs:
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
     runs-on: ubuntu-20.04
-
- #   services:
- #     mariadb:
- #       image: mariadb:latest
-#        options: >-
-#          --health-cmd "mysqladmin ping -h localhost
- #       ports:
- #         - 3306
-  #      options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10 
-  #      env:
-  #        MYSQL_USER: root
-  #        MYSQL_PASSWORD: root
-  #        MYSQL_DATABASE: test
-  #        MYSQL_ROOT_PASSWORD: root
+     services:
+      mariadb:
+        image: mariadb:latest
+        options: >-
+          --health-cmd "mysqladmin ping -h localhost
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10 
+        env:
+          MYSQL_USER: test
+          MYSQL_PASSWORD: root
+          MYSQL_DATABASE: test
+          MYSQL_ROOT_PASSWORD: root
 #        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
+       steps:
+            - name: Get MySQL service ID
+              id: mysql-service
+              run: echo "::set-output name=container-id::$(docker ps | grep -i mysql | awk '{print $1}')"
+            - name: Get Github network gateway address
+              id: github-network
+              run: echo "::set-output name=gateway-address::$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.Gateway}}{{end}}' ${{ steps.mysql-service.outputs.container-id }})"
+            - name: Check out Site Repository 📄
+              uses: actions/checkout@v2
+            - name: Create .env file
+              run: cp .env.example .env
+            - name: Replace environment variables
+              run: |
+                  sed -i 's/MYSQL_HOST.*/MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
+                  sed -i 's/MYSQL_PORT.*/MYSQL_PORT=${{ job.services.mysql.ports[3306] }}/g' .env
+#           env: MYSQL_HOST:       
 
-    steps:
-      - uses: actions/checkout@v3
-      - uses: shogo82148/actions-setup-mysql@v1
-        with:
-              mysql-version: "5.7"
-              root-password: "root"
-      - run: sudo apt-get install -y mysql-client && mysql --version && mysql -uroot -proot -e 'SELECT version()' && echo -e "Alert testing MYSQL connection...\n\n" && mysqladmin ping -h"127.0.0.1" -P"3306"
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: shogo82148/actions-setup-mysql@v1
+#        with:
+#              mysql-version: "5.7"
+#              root-password: "root"
+#      - run: sudo apt-get install -y mysql-client && mysql --version && mysql -uroot -proot -e 'SELECT version()' && echo -e "Alert testing MYSQL connection...\n\n" && mysqladmin ping -h"127.0.0.1" -P"3306"
  
 #      - uses: actions/checkout@v2
 #      - name: Verify MySQL connection from host
