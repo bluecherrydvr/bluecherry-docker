@@ -94,7 +94,7 @@ ARG MYSQL_ADMIN_PASSWORD
 
 # Specific database credentials used by bluecherry server
 ARG BLUECHERRY_DB_USER=bluecherry
-ARG BLUECHERRY_DB_HOST=mysql
+ARG BLUECHERRY_DB_HOST=mariadb
 ARG BLUECHERRY_DB_PASSWORD=bluecherry
 ARG BLUECHERRY_DB_NAME=bluecherry
 ARG BLUECHERRY_DB_ACCESS_HOST=%
