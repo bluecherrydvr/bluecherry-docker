@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     services:
-      mysq:
+      mysql:
         image: mysql:5.7
 #        options: >-
 #          --health-cmd "mysqladmin ping -h localhost
@@ -36,7 +36,7 @@ jobs:
           MYSQL_PASSWORD: root
           MYSQL_DATABASE: test
           MYSQL_ROOT_PASSWORD: root
-#        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
     steps:
       - uses: actions/checkout@v2
