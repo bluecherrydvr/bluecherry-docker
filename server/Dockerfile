@@ -26,7 +26,7 @@ RUN apt-get update
 CMD ["echo", "Testing mysql connection..."]
 
 RUN apt install -y mysql-client
-RUN mysql -uroot -proot -hmariadb -P3306 -e 'SELECT version()'
+RUN mysql -uroot -proot -hmysql -P3306 -e 'SELECT version()'
      
 
 # ---------------------------------------------------------------------------
@@ -116,7 +116,7 @@ ARG MYSQL_ADMIN_PASSWORD=root
 
 # Specific database credentials used by bluecherry server
 ARG BLUECHERRY_DB_USER=bluecherry
-ARG BLUECHERRY_DB_HOST=127.0.0.1
+ARG BLUECHERRY_DB_HOST=mysql
 ARG BLUECHERRY_DB_PASSWORD=qiNdklOierSZs2
 ARG BLUECHERRY_DB_NAME=bluecherry
 ARG BLUECHERRY_DB_ACCESS_HOST=%
