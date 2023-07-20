@@ -39,22 +39,35 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Verify MySQL connection from host
-        run: sudo apt-get install -y mysql-client
+       - name: Get MySQL service ID
+         id: mysql-service
+         run: echo "::set-output name=container-id::$(docker ps | grep -i mysql | awk '{print $1}')"
+       - name: Get Github network gateway address
+         id: github-network
+         run: echo "::set-output name=gateway-address::$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.Gateway}}{{end}}' ${{ steps.mysql-service.outputs.container-id }})"
+       - name: Check out Site Repository 📄
+       - uses: actions/checkout@v2
+       - name: Create .env file
+         run: cp .env.example .env
+       - name: Replace environment variables
+         run: |
+                  sed -i 's/MYSQL_HOST.*/MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
+                  sed -i 's/MYSQL_PORT.*/MYSQL_PORT=${{ job.services.mysql.ports[3306] }}/g' .env
+       - name: Verify MySQL connection from host
+         run: sudo apt-get install -y mysql-client
 
-      - name: Verify MariaDB connection
-        env:
+       - name: Verify MariaDB connection
+         env:
           PORT: ${{ job.services.mariadb.ports[3306] }}
-        run: |
+         run: |
           while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
             sleep 1
           done          
 
-      - name: Run tests
-        run: |
-         echo "test"
-         if [ -f docker-compose.test.yml ]; then
+       - name: Run tests
+         run: |
+          echo "test"
+          if [ -f docker-compose.test.yml ]; then
             docker-compose --file docker-compose.test.yml build
             docker-compose --file docker-compose.test.yml run sut
           else
