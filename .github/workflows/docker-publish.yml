@@ -53,7 +53,7 @@ jobs:
 
       - name: Run tests
         run: |
- #         sudo /etc/init.d/mysql start
+          sudo /etc/init.d/mysql status
           if [ -f docker-compose.test.yml ]; then
             docker-compose --file docker-compose.test.yml build
             docker-compose --file docker-compose.test.yml run sut
