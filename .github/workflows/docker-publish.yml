@@ -40,15 +40,15 @@ jobs:
 
 
     steps:
-      - uses: ankane/setup-mysql@v1
+      - uses: actions/checkout@v3
+      - uses: shogo82148/actions-setup-mysql@v1
         with:
-         mysql-version: 5.7
-      - name: Verify MySQL connection from host
-        run: sudo apt-get install -y mysql-client && mysql --version && echo -e "Alert testing MYSQL connection...\n\n" && mysqladmin ping -h"127.0.0.1" -P"3306"
+              mysql-version: "5.7"
+      - run: sudo apt-get install -y mysql-client && mysql --version && && mysql -uroot -e 'SELECT version()' && echo -e "Alert testing MYSQL connection...\n\n" && mysqladmin ping -h"127.0.0.1" -P"3306"
  
-      - uses: actions/checkout@v2
-      - name: Verify MySQL connection from host
-        run: sudo apt-get install -y mysql-client 
+#      - uses: actions/checkout@v2
+#      - name: Verify MySQL connection from host
+#        run: sudo apt-get install -y mysql-client 
 
 
       - name: Verify MariaDB connection
