@@ -107,7 +107,7 @@ RUN curl -k -o /tmp/bluecherry_3.1.0-rc8_amd64.deb https://unstable.bluecherrydv
 #COPY bluecherry.conf /etc/bluecherry.conf
 
 ARG MYSQL_ADMIN_LOGIN=root
-ARG MYSQL_ADMIN_PASSWORD=
+ARG MYSQL_ADMIN_PASSWORD=root
 
 # Specific database credentials used by bluecherry server
 ARG BLUECHERRY_DB_USER=bluecherry
