@@ -23,36 +23,20 @@ jobs:
   test:
     runs-on: ubuntu-20.04
 
-  #  services:
-  #    db:
-  #      image: mysql:5.7
-#        options: >-
-#          --health-cmd "mysqladmin ping -h localhost
-   #     ports:
-   #       - 3306:3306
-  #      options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10 
-    #    env:
-  #        MYSQL_USER: root
-     #     MYSQL_PASSWORD: root
-     #     MYSQL_DATABASE: test
-     #     MYSQL_ROOT_PASSWORD: root
-     #   options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
-
-services:
+    services:
       db:
         image: mysql:5.7
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: github_db
+        options: >-
+          --health-cmd "mysqladmin ping -h localhost
         ports:
-          - 3306
-        options:
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-          --name=db
+          - 3306:3306
+     #   options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10 
+        env:
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+          MYSQL_DATABASE: test
+          MYSQL_ROOT_PASSWORD: root
+          options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
     steps:
 #       - name: Enable mysql
