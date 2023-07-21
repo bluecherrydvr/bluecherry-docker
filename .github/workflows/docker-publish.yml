@@ -69,7 +69,7 @@ jobs:
          run: |
           echo "test"
           if [ -f docker-compose.test.yml ]; then
-            docker-compose --file docker-compose.test.yml build
+            docker-compose --file docker-compose.test.yml build --build-arg MYSQLHOST=$MYSQLHOST
             docker-compose --file docker-compose.test.yml run sut
           else
             docker build . --file server/Dockerfile
