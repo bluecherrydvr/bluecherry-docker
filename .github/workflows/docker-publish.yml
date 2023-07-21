@@ -46,22 +46,23 @@ jobs:
          id: github-network
          run: echo "::set-output name=gateway-address::$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.Gateway}}{{end}}' ${{ steps.mysql-service.outputs.container-id }})"
        - name: Check out Site Repository 📄
-         uses: actions/checkout@v2
+         uses: actions/checkout@v3
       # - name: Create .env file
       #   run: cp .env.example .env
-       - name: Replace environment variables
-         run: echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
+#       - name: Replace environment variables
+#         run: echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
 #                  sed -i 's/MYSQL_HOST.*/MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
 #                   sed -i 's/MYSQL_PORT.*/MYSQL_PORT=${{ job.services.mysql.ports[3306] }}/g' .env                   
        - name: Verify MySQL connection from host
-         run: sudo apt-get install -y mysql-client
-
+         run: |
+              sudo apt-get install -y mysql-client
+              sudo mysqladmin ping
        - name: Verify MariaDB connection
          env:
           PORT: ${{ job.services.mariadb.ports[3306] }}
           MYSQLHOST: ${{ steps.github-network.outputs.gateway-address }}
          run: |
-          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+          while ! mysqladmin ping --silent; do
             sleep 1
           done          
 
