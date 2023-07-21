@@ -36,7 +36,7 @@ jobs:
           MYSQL_PASSWORD: root
           MYSQL_DATABASE: test
           MYSQL_ROOT_PASSWORD: root
-          options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+  #        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
     steps:
 #       - name: Enable mysql
@@ -60,10 +60,10 @@ jobs:
          run: |
               sudo apt-get install -y mysql-client
               sudo mysqladmin ping -uroot -proot -h db
-   #    - name: Verify MariaDB connection
-   #      env:
-   #       PORT: ${{ job.services.mariadb.ports[3306] }}
-   #       MYSQLHOST: ${{ steps.github-network.outputs.gateway-address }}
+       - name: Verify MariaDB connection
+         env:
+          PORT: ${{ job.services.mariadb.ports[3306] }}
+          MYSQLHOST: ${{ steps.github-network.outputs.gateway-address }}
    #      run: |
    #       while ! mysqladmin ping --silent; do
    #         sleep 1
@@ -76,7 +76,7 @@ jobs:
             docker-compose --file docker-compose.test.yml build --build-arg MYSQLHOST=$MYSQLHOST
             docker-compose --file docker-compose.test.yml run sut
           else
-            docker build . --file server/Dockerfile
+            docker build . --file server/Dockerfile --build-arg MYSQLHOST=$MYSQLHOST
           fi
 
   # Push image to GitHub Packages.
