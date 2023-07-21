@@ -38,10 +38,26 @@ jobs:
      #     MYSQL_ROOT_PASSWORD: root
      #   options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
+services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: github_db
+        ports:
+          - 3306
+        options:
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+          --name=db
+
     steps:
-       - name: Enable mysql
-         id: mysql-enable
-         run: sudo /etc/init.d/mysql start
+#       - name: Enable mysql
+#         id: mysql-enable
+#         run: sudo /etc/init.d/mysql start
 #       - name: Get MySQL service ID
 #         id: mysql-service
 #         run: echo "::set-output name=container-id::$(docker ps | grep -i mysql | awk '{print $1}')"
@@ -59,7 +75,7 @@ jobs:
        - name: Verify MySQL connection from host
          run: |
               sudo apt-get install -y mysql-client
-              sudo mysqladmin ping -uroot -proot -h 127.0.0.1
+              sudo mysqladmin ping -uroot -proot -h db
    #    - name: Verify MariaDB connection
    #      env:
    #       PORT: ${{ job.services.mariadb.ports[3306] }}
