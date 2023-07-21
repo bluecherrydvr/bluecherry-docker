@@ -56,10 +56,10 @@ jobs:
 #         run: echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
 #                  sed -i 's/MYSQL_HOST.*/MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
 #                   sed -i 's/MYSQL_PORT.*/MYSQL_PORT=${{ job.services.mysql.ports[3306] }}/g' .env                   
-       - name: Verify MySQL connection from host
-         run: |
-              sudo apt-get install -y mysql-client
-              sudo mysqladmin ping -uroot -proot -h db
+ #      - name: Verify MySQL connection from host
+ #        run: |
+ #             sudo apt-get install -y mysql-client
+ #             sudo mysqladmin ping -uroot -proot -h db
        - name: Verify MariaDB connection
          env:
           PORT: ${{ job.services.mariadb.ports[3306] }}
