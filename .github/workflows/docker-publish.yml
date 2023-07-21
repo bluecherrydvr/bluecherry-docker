@@ -39,7 +39,7 @@ jobs:
      #   options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
 services:
-      mysql:
+      db:
         image: mysql:5.7
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
