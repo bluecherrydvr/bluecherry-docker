@@ -60,14 +60,14 @@ jobs:
  #        run: |
  #             sudo apt-get install -y mysql-client
  #             sudo mysqladmin ping -uroot -proot -h db
-       - name: Verify MariaDB connection
-         env:
-          PORT: ${{ job.services.mariadb.ports[3306] }}
-          MYSQLHOST: ${{ steps.github-network.outputs.gateway-address }}
-         run: |
-          while ! mysqladmin ping --silent; do
-            sleep 1
-          done          
+   #    - name: Verify MariaDB connection
+   #      env:
+   #       PORT: ${{ job.services.mariadb.ports[3306] }}
+   #       MYSQLHOST: ${{ steps.github-network.outputs.gateway-address }}
+   #      run: |
+   #       while ! mysqladmin ping --silent; do
+   #         sleep 1
+   #       done          
 
        - name: Run tests
          run: |
