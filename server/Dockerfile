@@ -2,12 +2,12 @@
 FROM ubuntu:20.04 AS baseos
 
 ARG BLUECHERRY_GIT_BRANCH_TAG=v3.1.0-rc8
-#ARG MYSQLHOST
-#ENV MYSQL_HOST=MYSQLHOST
+ARG MYSQLHOST
+ENV MYSQL_HOST=MYSQLHOST
 
 #RUN echo "Testing github network env"
 #RUN echo ${{ steps.github-network.outputs.gateway-address }}
-#RUN echo $MYSQL_HOST
+RUN echo $MYSQL_HOST
 
 # ---------------------------------------------------------------------------
 # Build the base OS with some development libs and tools
@@ -121,7 +121,7 @@ ARG MYSQL_ADMIN_PASSWORD=root
 
 # Specific database credentials used by bluecherry server
 ARG BLUECHERRY_DB_USER=bluecherry
-ARG BLUECHERRY_DB_HOST=127.0.01
+ARG BLUECHERRY_DB_HOST=127.0.0.1
 ARG BLUECHERRY_DB_PASSWORD=qiNdklOierSZs2
 ARG BLUECHERRY_DB_NAME=bluecherry
 ARG BLUECHERRY_DB_ACCESS_HOST=%
