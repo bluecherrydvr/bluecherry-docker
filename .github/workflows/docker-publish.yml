@@ -26,7 +26,7 @@ jobs:
     services:
       db:
         image: mysql:5.7
-        options: >-
+#        options: >-
      #     --health-cmd "mysqladmin ping -h localhost
         ports:
           - 3306:3306
