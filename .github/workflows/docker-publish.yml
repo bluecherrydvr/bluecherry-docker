@@ -23,22 +23,25 @@ jobs:
   test:
     runs-on: ubuntu-20.04
 
-    services:
-      db:
-        image: mysql:5.7
+  #  services:
+  #    db:
+  #      image: mysql:5.7
 #        options: >-
 #          --health-cmd "mysqladmin ping -h localhost
-        ports:
-          - 3306:3306
+   #     ports:
+   #       - 3306:3306
   #      options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10 
-        env:
+    #    env:
   #        MYSQL_USER: root
-          MYSQL_PASSWORD: root
-          MYSQL_DATABASE: test
-          MYSQL_ROOT_PASSWORD: root
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+     #     MYSQL_PASSWORD: root
+     #     MYSQL_DATABASE: test
+     #     MYSQL_ROOT_PASSWORD: root
+     #   options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
     steps:
+       - name: Enable mysql
+         id: mysql-enable
+         run: sudo /etc/init.d/mysql start
        - name: Get MySQL service ID
          id: mysql-service
          run: echo "::set-output name=container-id::$(docker ps | grep -i mysql | awk '{print $1}')"
@@ -56,15 +59,15 @@ jobs:
        - name: Verify MySQL connection from host
          run: |
               sudo apt-get install -y mysql-client
-              sudo mysqladmin ping -h db
-       - name: Verify MariaDB connection
-         env:
-          PORT: ${{ job.services.mariadb.ports[3306] }}
-          MYSQLHOST: ${{ steps.github-network.outputs.gateway-address }}
-         run: |
-          while ! mysqladmin ping --silent; do
-            sleep 1
-          done          
+              sudo mysqladmin ping -uroot -proot -h 127.0.0.1
+   #    - name: Verify MariaDB connection
+   #      env:
+   #       PORT: ${{ job.services.mariadb.ports[3306] }}
+   #       MYSQLHOST: ${{ steps.github-network.outputs.gateway-address }}
+   #      run: |
+   #       while ! mysqladmin ping --silent; do
+   #         sleep 1
+   #       done          
 
        - name: Run tests
          run: |
