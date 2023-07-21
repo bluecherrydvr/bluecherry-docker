@@ -42,12 +42,12 @@ jobs:
        - name: Enable mysql
          id: mysql-enable
          run: sudo /etc/init.d/mysql start
-       - name: Get MySQL service ID
-         id: mysql-service
-         run: echo "::set-output name=container-id::$(docker ps | grep -i mysql | awk '{print $1}')"
-       - name: Get Github network gateway address
-         id: github-network
-         run: echo "::set-output name=gateway-address::$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.Gateway}}{{end}}' ${{ steps.mysql-service.outputs.container-id }})"
+#       - name: Get MySQL service ID
+#         id: mysql-service
+#         run: echo "::set-output name=container-id::$(docker ps | grep -i mysql | awk '{print $1}')"
+ #      - name: Get Github network gateway address
+ #        id: github-network
+ #        run: echo "::set-output name=gateway-address::$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.Gateway}}{{end}}' ${{ steps.mysql-service.outputs.container-id }})"
        - name: Check out Site Repository 📄
          uses: actions/checkout@v3
       # - name: Create .env file
