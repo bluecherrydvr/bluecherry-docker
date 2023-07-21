@@ -5,6 +5,8 @@ ARG BLUECHERRY_GIT_BRANCH_TAG=v3.1.0-rc8
 ARG MYSQLHOST
 ENV MYSQL_HOST=MYSQLHOST
 
+RUN echo "Testing github network env"
+RUN echo ${{ steps.github-network.outputs.gateway-address }}
 RUN echo $MYSQL_HOST
 
 # ---------------------------------------------------------------------------
