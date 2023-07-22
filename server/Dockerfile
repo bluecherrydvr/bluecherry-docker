@@ -33,7 +33,7 @@ RUN apt-get update
 CMD ["echo", "Testing mysql connection..."]
 
 RUN apt install -y mysql-client
-RUN mysql -uroot -proot -hmysql -e 'SELECT version()'
+RUN mysql -uroot -proot -h172.17.0.1 -e 'SELECT version()'
      
 
 # ---------------------------------------------------------------------------
