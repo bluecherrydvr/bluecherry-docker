@@ -14,6 +14,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       TZ: $TZ
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   bc-server:
     build: .
  #   network: bluecherry_net
