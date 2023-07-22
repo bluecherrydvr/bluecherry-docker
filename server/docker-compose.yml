@@ -17,7 +17,7 @@ services:
   bc-server:
     build: ./server/.
     network: bluecherry_net
-      args:
+#      args:
         # MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD
         # MYSQL_ADMIN_LOGIN: $MYSQL_ADMIN_LOGIN
         # BLUECHERRY_DB_USER: $BLUECHERRY_DB_USER
