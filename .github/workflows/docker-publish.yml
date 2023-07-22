@@ -58,10 +58,10 @@ jobs:
                   sed -i 's/BLUECHERRY_DB_HOST.*/BLUECHERRY_DB_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
                   # sed -i 's/MYSQL_PORT.*/MYSQL_PORT=${{ job.services.mysql.ports[3306] }}/g' .env                   
     # need checkout before using compose-action
-      - uses: actions/checkout@v3
+    #  - uses: actions/checkout@v3
       - uses: isbang/compose-action@v1.4.1
         with:
-          compose-file: "./docker/docker-compose.yml"
+          compose-file: "./server/docker-compose.yml"
           down-flags: "--volumes"
 #      - name: Build the stack
 #        run: cd server && docker-compose up -d
