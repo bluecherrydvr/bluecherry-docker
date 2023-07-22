@@ -1,148 +1,44 @@
-name: Docker
+version: '3.9'
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
+#    options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    restart: always
+    volumes:
+      - ./database:/var/lib/mysql
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    ports: 
+       - "3306:3306"
+    networks:
+        - bluecherry
+    #options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: $TZ
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
-on:
-  push:
-    # Publish `master` as Docker `latest` image.
-    branches:
-      - master
-
-    # Publish `v1.2.3` tags as releases.
-    tags:
-      - v*
-
-  # Run tests for any PRs.
-  pull_request:
-
-env:
-  # TODO: Change variable to your image's name.
-  IMAGE_NAME: bluecherrydvr
-
-jobs:
-  # Run tests.
-  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  test:
-    runs-on: ubuntu-20.04
-
-
-
-
-
-#    services:
-#      db:
-#        image: mysql:5.7
-#        options: >-
-     #     --health-cmd "mysqladmin ping -h localhost
- #       ports:
- #         - 3306:3306
-     #   options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10 
-  #      env:
-#          MYSQL_USER: root
-  #        MYSQL_PASSWORD: root
-  #        MYSQL_DATABASE: test
-  #        MYSQL_ROOT_PASSWORD: root
-  #        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
-
-   # steps:
-    
-    #name: Docker Compose Actions Workflow
-     #on: push
-      #jobs:
-     # test:
-      # runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Create .env file
-        run: cp dotenv server/.env && cp dotenv .env && cat .env
-      - name: Replace environment variables
-        run: #echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
-                  sed -i 's/BLUECHERRY_DB_HOST.*/BLUECHERRY_DB_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
-                  # sed -i 's/MYSQL_PORT.*/MYSQL_PORT=${{ job.services.mysql.ports[3306] }}/g' .env                   
-    #  - name: Create Docker Network
-    #    run: docker network create bluecherry_net
-  
-  # need checkout before using compose-action
-    #  - uses: actions/checkout@v3
-      - uses: isbang/compose-action@v1.4.1
-        with:
-          compose-file: "./server/docker-compose.yml"
-          down-flags: "--volumes"
-        env: 
-          BLUECHERRY_DB_HOST: ${{ steps.github-network.outputs.gateway-address }}  
-#      - name: Build the stack
-#        run: cd server && docker-compose up -d
-#       - name: Enable mysql
-#         id: mysql-enable
-#         run: sudo /etc/init.d/mysql start
-#       - name: Get MySQL service ID
-#         id: mysql-service
-#         run: echo "::set-output name=container-id::$(docker ps | grep -i mysql | awk '{print $1}')"
- #      - name: Get Github network gateway address
- #        id: github-network
- #        run: echo "::set-output name=gateway-address::$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.Gateway}}{{end}}' ${{ steps.mysql-service.outputs.container-id }})"
-  #     - name: Check out Site Repository 📄
-  #       uses: actions/checkout@v3
- #      - name: Verify MySQL connection from host
- #        run: |
- #             sudo apt-get install -y mysql-client
- #             sudo mysqladmin ping -uroot -proot -h db
-   #    - name: Verify MariaDB connection
-   #      env:
-   #       PORT: ${{ job.services.mariadb.ports[3306] }}
-   #       MYSQLHOST: ${{ steps.github-network.outputs.gateway-address }}
-   #      run: |
-   #       while ! mysqladmin ping --silent; do
-   #         sleep 1
-   #       done          
-
-
-
-    #   - name: Run tests
-    #     run: |
-    #      echo "test"
-    #      if [ -f docker-compose.test.yml ]; then
-    #        docker-compose --file docker-compose.test.yml build --build-arg MYSQLHOST=$MYSQLHOST
-    #        docker-compose --file docker-compose.test.yml run sut
-    #      else
-    #        docker build . --file server/Dockerfile --build-arg MYSQLHOST=$MYSQLHOST
-    #      fi
-
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
-  push:
-    # Ensure test job passes before pushing image.
-    needs: test
-
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Build image
-        run: docker build . --file server/Dockerfile --tag $IMAGE_NAME
-
-      - name: Log into GitHub Container Registry
-      # TODO: Create a PAT with `read:packages` and `write:packages` scopes and save it as an Actions secret `CR_PAT`
-        run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Push image to GitHub Container Registry
-        run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
-
-          # Change all uppercase to lowercase
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
-
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+  bc-server:
+    build: .
+    depends_on:
+      mysql:
+        condition: service_completed_successfully
+    #network: bluecherry_net
+#      args:
+        # MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD
+        # MYSQL_ADMIN_LOGIN: $MYSQL_ADMIN_LOGIN
+        # BLUECHERRY_DB_USER: $BLUECHERRY_DB_USER
+        # BLUECHERRY_DB_PASSWORD: $BLUECHERRY_DB_PASSWORD
+        # BLUECHERRY_DB_NAME: $BLUECHERRY_DB_NAME
+        # BLUECHERRY_DB_HOST: $BLUECHERRY_DB_HOST
+        # BLUECHERRY_DB_ACCESS_HOST: $BLUECHERRY_DB_ACCESS_HOST
+        # BLUECHERRY_LINUX_GROUP_ID: $BLUECHERRY_LINUX_GROUP_ID
+        # BLUECHERRY_LINUX_USER_ID: $BLUECHERRY_LINUX_USER_ID    
+networks:
+    bluecherry:    
+     name: bluecherry
