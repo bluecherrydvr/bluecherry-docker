@@ -58,7 +58,7 @@ jobs:
                   sed -i 's/BLUECHERRY_DB_HOST.*/BLUECHERRY_DB_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
                   # sed -i 's/MYSQL_PORT.*/MYSQL_PORT=${{ job.services.mysql.ports[3306] }}/g' .env                   
       - name: Build the stack
-        run: docker-compose up -d
+        run: cd server && docker-compose up -d
 #       - name: Enable mysql
 #         id: mysql-enable
 #         run: sudo /etc/init.d/mysql start
