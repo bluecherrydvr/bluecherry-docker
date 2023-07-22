@@ -52,7 +52,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Create .env file
-        run: cp dotenv server/.env
+        run: cp dotenv server/.env && cp dotenv .env
       - name: Replace environment variables
         run: #echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
                   sed -i 's/BLUECHERRY_DB_HOST.*/BLUECHERRY_DB_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
