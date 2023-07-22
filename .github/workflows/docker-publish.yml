@@ -23,22 +23,36 @@ jobs:
   test:
     runs-on: ubuntu-20.04
 
-    services:
-      db:
-        image: mysql:5.7
+
+
+
+
+#    services:
+#      db:
+#        image: mysql:5.7
 #        options: >-
      #     --health-cmd "mysqladmin ping -h localhost
-        ports:
-          - 3306:3306
+ #       ports:
+ #         - 3306:3306
      #   options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10 
-        env:
+  #      env:
 #          MYSQL_USER: root
-          MYSQL_PASSWORD: root
-          MYSQL_DATABASE: test
-          MYSQL_ROOT_PASSWORD: root
+  #        MYSQL_PASSWORD: root
+  #        MYSQL_DATABASE: test
+  #        MYSQL_ROOT_PASSWORD: root
   #        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
+   # steps:
+    
+    #name: Docker Compose Actions Workflow
+     #on: push
+      #jobs:
+     # test:
+      # runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      - name: Build the stack
+        run: docker-compose up -d
 #       - name: Enable mysql
 #         id: mysql-enable
 #         run: sudo /etc/init.d/mysql start
@@ -48,8 +62,8 @@ jobs:
  #      - name: Get Github network gateway address
  #        id: github-network
  #        run: echo "::set-output name=gateway-address::$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.Gateway}}{{end}}' ${{ steps.mysql-service.outputs.container-id }})"
-       - name: Check out Site Repository 📄
-         uses: actions/checkout@v3
+  #     - name: Check out Site Repository 📄
+  #       uses: actions/checkout@v3
       # - name: Create .env file
       #   run: cp .env.example .env
 #       - name: Replace environment variables
@@ -69,15 +83,17 @@ jobs:
    #         sleep 1
    #       done          
 
-       - name: Run tests
-         run: |
-          echo "test"
-          if [ -f docker-compose.test.yml ]; then
-            docker-compose --file docker-compose.test.yml build --build-arg MYSQLHOST=$MYSQLHOST
-            docker-compose --file docker-compose.test.yml run sut
-          else
-            docker build . --file server/Dockerfile --build-arg MYSQLHOST=$MYSQLHOST
-          fi
+
+
+    #   - name: Run tests
+    #     run: |
+    #      echo "test"
+    #      if [ -f docker-compose.test.yml ]; then
+    #        docker-compose --file docker-compose.test.yml build --build-arg MYSQLHOST=$MYSQLHOST
+    #        docker-compose --file docker-compose.test.yml run sut
+    #      else
+    #        docker build . --file server/Dockerfile --build-arg MYSQLHOST=$MYSQLHOST
+    #      fi
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
