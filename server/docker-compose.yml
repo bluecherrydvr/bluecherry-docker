@@ -16,6 +16,9 @@ services:
       TZ: $TZ
   bc-server:
     build: .
+    depends_on:
+      mysql:
+        condition: service_healthy
  #   network: bluecherry_net
 #      args:
         # MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD
