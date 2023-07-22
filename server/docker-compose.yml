@@ -14,7 +14,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       TZ: $TZ
-    bc-server:
+  bc-server:
     build: ./server/.
     network: bluecherry_net
       args:
