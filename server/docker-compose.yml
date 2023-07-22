@@ -11,7 +11,8 @@ services:
       - ./database:/var/lib/mysql
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
-    ports: 3306:3306
+    ports: 
+       -3306
     options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     environment:
       MYSQL_ROOT_PASSWORD: root
