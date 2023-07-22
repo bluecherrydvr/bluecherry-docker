@@ -5,13 +5,14 @@ services:
     container_name: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-    network: bluecherry_net
     volumes:
       - ./database:/var/lib/mysql
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
     ports: 
        - "3306:3306"
+    networks:
+        - bluecherry
     #options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -22,7 +23,7 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    network: bluecherry_net
+    #network: bluecherry_net
 #      args:
         # MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD
         # MYSQL_ADMIN_LOGIN: $MYSQL_ADMIN_LOGIN
@@ -34,5 +35,5 @@ services:
         # BLUECHERRY_LINUX_GROUP_ID: $BLUECHERRY_LINUX_GROUP_ID
         # BLUECHERRY_LINUX_USER_ID: $BLUECHERRY_LINUX_USER_ID    
 networks:
-  bluecherry_net:
-    name: bluecherry_net     
+    bluecherry:    
+     name: bluecherry
