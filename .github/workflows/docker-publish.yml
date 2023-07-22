@@ -57,8 +57,8 @@ jobs:
         run: #echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
                   sed -i 's/BLUECHERRY_DB_HOST.*/BLUECHERRY_DB_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
                   # sed -i 's/MYSQL_PORT.*/MYSQL_PORT=${{ job.services.mysql.ports[3306] }}/g' .env                   
-      - name: Create Docker Network
-        run: docker network create bluecherry_net
+    #  - name: Create Docker Network
+    #    run: docker network create bluecherry_net
   
   # need checkout before using compose-action
     #  - uses: actions/checkout@v3
