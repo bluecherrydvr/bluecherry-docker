@@ -15,7 +15,6 @@ services:
       MYSQL_ROOT_PASSWORD: root
       TZ: $TZ
 
-   services:
     bc-server:
     build:
       context: ./server/
