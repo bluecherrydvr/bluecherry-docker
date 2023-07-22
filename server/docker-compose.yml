@@ -17,6 +17,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       TZ: $TZ
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
   bc-server:
     build: .
