@@ -1,0 +1,36 @@
+version: '3.7'
+services:
+  bc-mysql:
+    image: mysql:latest
+    container_name: bc-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    networks: 
+      - bluecherry_net
+    volumes:
+      - ./database:/var/lib/mysql
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: $TZ
+
+   services:
+    bc-server:
+    build:
+      context: ./server/
+      network: bluecherry_net
+      args:
+        # MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD
+        # MYSQL_ADMIN_LOGIN: $MYSQL_ADMIN_LOGIN
+        # BLUECHERRY_DB_USER: $BLUECHERRY_DB_USER
+        # BLUECHERRY_DB_PASSWORD: $BLUECHERRY_DB_PASSWORD
+        # BLUECHERRY_DB_NAME: $BLUECHERRY_DB_NAME
+        # BLUECHERRY_DB_HOST: $BLUECHERRY_DB_HOST
+        # BLUECHERRY_DB_ACCESS_HOST: $BLUECHERRY_DB_ACCESS_HOST
+        # BLUECHERRY_LINUX_GROUP_ID: $BLUECHERRY_LINUX_GROUP_ID
+        # BLUECHERRY_LINUX_USER_ID: $BLUECHERRY_LINUX_USER_ID    
+
+  networks:
+  bluecherry_net:
+    name: bluecherry_net     
