@@ -1,9 +1,10 @@
-version: '3.7'
+version: '3.9'
 services:
   mysql:
     image: mysql:latest
     container_name: mysql
     command: --default-authentication-plugin=mysql_native_password
+#    options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     restart: always
     volumes:
       - ./database:/var/lib/mysql
@@ -26,7 +27,7 @@ services:
     build: .
     depends_on:
       mysql:
-        condition: service_healthy
+        condition: service_completed_successfully
     #network: bluecherry_net
 #      args:
         # MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD
