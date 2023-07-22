@@ -5,8 +5,8 @@ services:
     container_name: bc-mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-    networks: 
-      - bluecherry_net
+#    networks: 
+#      - bluecherry_net
     volumes:
       - ./database:/var/lib/mysql
       - "/etc/timezone:/etc/timezone:ro"
@@ -16,7 +16,7 @@ services:
       TZ: $TZ
   bc-server:
     build: ./server/.
-    network: bluecherry_net
+ #   network: bluecherry_net
 #      args:
         # MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD
         # MYSQL_ADMIN_LOGIN: $MYSQL_ADMIN_LOGIN
