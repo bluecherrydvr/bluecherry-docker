@@ -7,7 +7,7 @@ services:
 #    options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     restart: always
     volumes:
-      - database:/var/lib/mysql
+      - ./database:/var/lib/mysql
 #      - "/etc/timezone:/etc/timezone:ro"
 #      - "/etc/localtime:/etc/localtime:ro"
     ports: 
