@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3'
 services:
   bc-mysql:
     image: mysql:latest
@@ -14,11 +14,9 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       TZ: $TZ
-
     bc-server:
-    build:
-      context: ./server/
-      network: bluecherry_net
+    build: ./server/.
+    network: bluecherry_net
       args:
         # MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD
         # MYSQL_ADMIN_LOGIN: $MYSQL_ADMIN_LOGIN
@@ -29,7 +27,6 @@ services:
         # BLUECHERRY_DB_ACCESS_HOST: $BLUECHERRY_DB_ACCESS_HOST
         # BLUECHERRY_LINUX_GROUP_ID: $BLUECHERRY_LINUX_GROUP_ID
         # BLUECHERRY_LINUX_USER_ID: $BLUECHERRY_LINUX_USER_ID    
-
   networks:
   bluecherry_net:
     name: bluecherry_net     
