@@ -36,7 +36,8 @@ services:
     depends_on:
       mysql:
         condition: service_completed_successfully
-    #network: bluecherry_net
+    networks:
+        - bluecherry
 #      args:
         # MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD
         # MYSQL_ADMIN_LOGIN: $MYSQL_ADMIN_LOGIN
