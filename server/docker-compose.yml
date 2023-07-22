@@ -33,6 +33,6 @@ services:
         # BLUECHERRY_DB_ACCESS_HOST: $BLUECHERRY_DB_ACCESS_HOST
         # BLUECHERRY_LINUX_GROUP_ID: $BLUECHERRY_LINUX_GROUP_ID
         # BLUECHERRY_LINUX_USER_ID: $BLUECHERRY_LINUX_USER_ID    
-  networks:
+networks:
   bluecherry_net:
     name: bluecherry_net     
