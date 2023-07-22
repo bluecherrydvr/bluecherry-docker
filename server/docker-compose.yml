@@ -16,6 +16,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       TZ: $TZ
+
   bc-server:
     build: .
     depends_on:
