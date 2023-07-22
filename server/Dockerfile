@@ -32,7 +32,6 @@ RUN apt-get update
 
 CMD ["echo", "Testing mysql connection..."]
 
-RUN cat .env
 RUN apt install -y mysql-client
 RUN mysql -uroot -proot -h$BLUECHERRY_DB_HOST -e 'SELECT version()'
      
