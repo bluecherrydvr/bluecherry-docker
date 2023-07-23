@@ -50,7 +50,6 @@ jobs:
      # test:
       # runs-on: ubuntu-latest
     steps:
-
       - uses: actions/checkout@v3
       - name: Create .env file
         run: cp dotenv server/.env && cp dotenv .env && cat .env
@@ -107,7 +106,7 @@ jobs:
 
       - name: Run tests
         run: |
-         echo "test"
+         #echo "test"
          docker build . --file server/Dockerfile 
     #      if [ -f docker-compose.test.yml ]; then
     #        docker-compose --file docker-compose.test.yml build --build-arg MYSQLHOST=$MYSQLHOST
@@ -117,7 +116,7 @@ jobs:
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
-  push:
+    push:
     # Ensure test job passes before pushing image.
     needs: test
 
