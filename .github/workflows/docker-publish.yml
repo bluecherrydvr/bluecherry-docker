@@ -22,10 +22,11 @@ jobs:
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
     runs-on: ubuntu-20.04
-
-
-
-
+steps:     
+   - name: Verify MySQL connection from host
+     run: |
+           sudo apt-get install -y mysql-client
+           sudo mysqladmin ping -uroot -proot -h db
 
 #    services:
 #      db:
@@ -49,25 +50,25 @@ jobs:
       #jobs:
      # test:
       # runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Create .env file
-        run: cp dotenv server/.env && cp dotenv .env && cat .env
-      - name: Replace environment variables
-        run: #echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
-                  sed -i 's/BLUECHERRY_DB_HOST.*/BLUECHERRY_DB_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
+  #  steps:
+  #    - uses: actions/checkout@v3
+  #    - name: Create .env file
+  #      run: cp dotenv server/.env && cp dotenv .env && cat .env
+  #    - name: Replace environment variables
+   #     run: #echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
+   #               sed -i 's/BLUECHERRY_DB_HOST.*/BLUECHERRY_DB_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
                   # sed -i 's/MYSQL_PORT.*/MYSQL_PORT=${{ job.services.mysql.ports[3306] }}/g' .env                   
     #  - name: Create Docker Network
     #    run: docker network create bluecherry_net
   
   # need checkout before using compose-action
     #  - uses: actions/checkout@v3
-      - uses: isbang/compose-action@v1.4.1
-        with:
-          compose-file: "./server/docker-compose.yml"
-          down-flags: "--volumes"
-        env: 
-          BLUECHERRY_DB_HOST: ${{ steps.github-network.outputs.gateway-address }}  
+    #  - uses: isbang/compose-action@v1.4.1
+    #    with:
+    #      compose-file: "./server/docker-compose.yml"
+    #      down-flags: "--volumes"
+  #3    env: 
+#  3      BLUECHERRY_DB_HOST: ${{ steps.github-network.outputs.gateway-address }}  
 #      - name: Build the stack
 #        run: cd server && docker-compose up -d
 #       - name: Enable mysql
