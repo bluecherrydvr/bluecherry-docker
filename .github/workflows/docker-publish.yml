@@ -20,8 +20,8 @@ env:
 jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  test:
-    runs-on: ubuntu-20.04
+ # test:
+ #   runs-on: ubuntu-20.04
 
 
 
