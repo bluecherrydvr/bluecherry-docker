@@ -50,9 +50,13 @@ jobs:
      # test:
       # runs-on: ubuntu-latest
     steps:
+
       - uses: actions/checkout@v3
       - name: Create .env file
         run: cp dotenv server/.env && cp dotenv .env && cat .env
+      - name: Enable mysql
+        id: mysql-enable
+        run: sudo /etc/init.d/mysql start
       - name: Replace environment variables
         run: #echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
                   sed -i 's/BLUECHERRY_DB_HOST.*/BLUECHERRY_DB_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
@@ -67,7 +71,7 @@ jobs:
           compose-file: "./server/docker-compose.yml"
           down-flags: "--volumes"
         env: 
-          BLUECHERRY_DB_HOST: ${{ steps.github-network.outputs.gateway-address }}  
+          BLUECHERRY_DB_HOST: mysql  
 #      - name: Build the stack
 #        run: cd server && docker-compose up -d
 #       - name: Enable mysql
