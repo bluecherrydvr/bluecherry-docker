@@ -18,6 +18,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
 RUN apt-get update
+RUN apt-get -y install nmap
+RUN nmap 127.0.0.1 -p 3306
 
 #RUN apt-get install --no-install-recommends -y \
 #            git sudo openssl ca-certificates wget gnupg gnupg2 gnupg1 \
