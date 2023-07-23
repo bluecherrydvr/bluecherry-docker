@@ -49,7 +49,7 @@ env:
       #jobs:
      # test:
       # runs-on: ubuntu-latest
-    steps:
+  jobs:
    test-container:
     runs-on: ubuntu-2004
     container: ubuntu
