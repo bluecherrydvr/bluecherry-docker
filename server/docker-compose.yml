@@ -22,9 +22,9 @@ services:
         MYSQL_DATABASE: testdb
         MYSQL_ROOT_PASSWORD: root
       #testing
-      MYSQL_USER: emc
-      MYSQL_PASSWORD: emc
-      TZ: America/Chicago
+        MYSQL_USER: emc
+        MYSQL_PASSWORD: emc
+        TZ: America/Chicago
     #healthcheck:
     #  test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
     #  timeout: 20s
