@@ -70,12 +70,12 @@ jobs:
   
   # need checkout before using compose-action
     #  - uses: actions/checkout@v3
-      - uses: isbang/compose-action@v1.4.1
-        with:
-          compose-file: "./server/docker-compose.yml"
-          down-flags: "--volumes"
-        env: 
-          BLUECHERRY_DB_HOST: mysql  
+    #  - uses: isbang/compose-action@v1.4.1
+    #    with:
+    #      compose-file: "./server/docker-compose.yml"
+    #      down-flags: "--volumes"
+    #    env: 
+    #      BLUECHERRY_DB_HOST: mysql  
 #      - name: Build the stack
 #        run: cd server && docker-compose up -d
 #       - name: Enable mysql
@@ -104,14 +104,14 @@ jobs:
 
 
 
-    #   - name: Run tests
-    #     run: |
-    #      echo "test"
+      - name: Run tests
+        run: |
+         echo "test"
+         docker build . --file server/Dockerfile --build-arg MYSQLHOST=$MYSQLHOST
     #      if [ -f docker-compose.test.yml ]; then
     #        docker-compose --file docker-compose.test.yml build --build-arg MYSQLHOST=$MYSQLHOST
     #        docker-compose --file docker-compose.test.yml run sut
     #      else
-    #        docker build . --file server/Dockerfile --build-arg MYSQLHOST=$MYSQLHOST
     #      fi
 
   # Push image to GitHub Packages.
