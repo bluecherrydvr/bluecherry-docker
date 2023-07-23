@@ -17,7 +17,7 @@ env:
   # TODO: Change variable to your image's name.
   IMAGE_NAME: bluecherrydvr
 
-jobs:
+#jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
  # test:
@@ -50,6 +50,22 @@ jobs:
      # test:
       # runs-on: ubuntu-latest
     steps:
+   test-container:
+    runs-on: ubuntu-2004
+    container: ubuntu
+    services:
+      mydb:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: password
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+    steps:
+    - name: Verify MySQL connection from container 
+      run: |
+        apt-get update
+        apt-get install -y mysql-client
+        mysql --host mydb -uroot -ppassword -e "SHOW DATABASES"
+    
 
       - uses: actions/checkout@v3
       - name: Create .env file
@@ -57,10 +73,10 @@ jobs:
       - name: Enable mysql
         id: mysql-enable
         run: sudo /etc/init.d/mysql start
-      - name: Verify MySQL connection from host
-        run: |
-              sudo apt-get install -y mysql-client
-              sudo mysqladmin ping -uroot -proot -h 127.0.0.1  
+     # - name: Verify MySQL connection from host
+     #   run: |
+     #         sudo apt-get install -y mysql-client
+     #         sudo mysqladmin ping -uroot -proot -h 127.0.0.1  
       - name: Replace environment variables
         run: #echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
                   sed -i 's/BLUECHERRY_DB_HOST.*/BLUECHERRY_DB_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
