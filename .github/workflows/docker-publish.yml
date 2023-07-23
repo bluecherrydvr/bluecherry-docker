@@ -107,7 +107,7 @@ jobs:
       - name: Run tests
         run: |
          echo "test"
-         docker build . --file server/Dockerfile --build-arg MYSQLHOST=$MYSQLHOST
+         docker build . --file server/Dockerfile --net=host
     #      if [ -f docker-compose.test.yml ]; then
     #        docker-compose --file docker-compose.test.yml build --build-arg MYSQLHOST=$MYSQLHOST
     #        docker-compose --file docker-compose.test.yml run sut
