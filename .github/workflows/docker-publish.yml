@@ -61,9 +61,9 @@ jobs:
         run: |
               sudo apt-get install -y mysql-client
               sudo mysqladmin ping -uroot -proot -h 127.0.0.1  
-      - name: Setup Runner Database
-        run: |
-              mysql -uroot -h127.0.0.1 -proot -e 'show tables;'        
+     # - name: Setup Runner Database
+     #   run: |
+     #         mysql -uroot -h127.0.0.1 -proot -e 'show tables;'        
       - name: Replace environment variables
         run: #echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
                   sed -i 's/BLUECHERRY_DB_HOST.*/BLUECHERRY_DB_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
