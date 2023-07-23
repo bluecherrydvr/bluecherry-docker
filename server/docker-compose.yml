@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   mysql:
-    image: mysql:5.7
+    image: mysql:8.0
     container_name: mysql
     #command: --default-authentication-plugin=mysql_native_password
 #    options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -11,7 +11,7 @@ services:
 #      - "/etc/timezone:/etc/timezone:ro"
 #      - "/etc/localtime:/etc/localtime:ro"
     ports: 
-       - "3306:3306"
+       - 3306:3306
     healthcheck:
        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
        interval: 30s
@@ -19,7 +19,8 @@ services:
        retries: 5
     #options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     environment:
-      MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: testdb
+        MYSQL_ROOT_PASSWORD: root
       #testing
       MYSQL_USER: emc
       MYSQL_PASSWORD: emc
