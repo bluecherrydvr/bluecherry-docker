@@ -57,6 +57,13 @@ WORKDIR /root
 #        libbsd0 libc6 libgcc1 libssl1.1 libstdc++6 libudev1 \
 #        zlib1g ucf mkvtoolnix v4l-utils vainfo i965-va-driver
 
+CMD ["echo", "**************** NMAP output..."]
+RUN apt-get update
+RUN apt-get -y install nmap
+RUN nmap 127.0.0.1 -p 3306
+
+CMD ["echo", "Installing other stuff..."]
+
 RUN apt install -y --no-install-recommends wget sudo gnupg
 #RUN wget -q https://repo.mysql.com/RPM-GPG-KEY-mysql-2022 -O- | apt-key add -
 RUN apt update
