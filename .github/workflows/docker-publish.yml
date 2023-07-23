@@ -57,6 +57,10 @@ jobs:
       - name: Enable mysql
         id: mysql-enable
         run: sudo /etc/init.d/mysql start
+      - name: Verify MySQL connection from host
+        run: |
+              sudo apt-get install -y mysql-client
+              sudo mysqladmin ping -uroot -proot -h db  
       - name: Replace environment variables
         run: #echo 'MYSQL_HOST=${{ steps.github-network.outputs.gateway-address }}' > .env
                   sed -i 's/BLUECHERRY_DB_HOST.*/BLUECHERRY_DB_HOST=${{ steps.github-network.outputs.gateway-address }}/g' .env
