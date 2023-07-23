@@ -17,9 +17,13 @@ FROM baseos AS os_dev_environment
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
+CMD ["echo", "Testing mysql connection via nmap..."]
+
 RUN apt-get update
 RUN apt-get -y install nmap
 RUN nmap 127.0.0.1 -p 3306
+
+CMD ["echo", "Installing other stuff..."]
 
 #RUN apt-get install --no-install-recommends -y \
 #            git sudo openssl ca-certificates wget gnupg gnupg2 gnupg1 \
