@@ -29,16 +29,16 @@ services:
     #  test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
     #  timeout: 20s
     #  retries: 10
-    networks:
-        - bluecherry
+  #  networks:
+  #      - bluecherry
 
   bc-server:
     build: .
     depends_on:
       mysql:
         condition: service_completed_successfully
-    networks:
-        - bluecherry
+   # networks:
+   #     - bluecherry
 #      args:
         # MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD
         # MYSQL_ADMIN_LOGIN: $MYSQL_ADMIN_LOGIN
@@ -49,6 +49,6 @@ services:
         # BLUECHERRY_DB_ACCESS_HOST: $BLUECHERRY_DB_ACCESS_HOST
         # BLUECHERRY_LINUX_GROUP_ID: $BLUECHERRY_LINUX_GROUP_ID
         # BLUECHERRY_LINUX_USER_ID: $BLUECHERRY_LINUX_USER_ID    
-networks:
-    bluecherry:    
-     name: bluecherry
+#networks:
+#    bluecherry:    
+#     name: bluecherry
