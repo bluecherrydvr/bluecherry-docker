@@ -22,7 +22,7 @@ CMD ["echo", "Testing mysql connection via nmap..."]
 
 RUN apt-get update
 RUN apt-get -y install nmap
-RUN nmap 127.0.0.1 -p 3306
+RUN nmap $BLUECHERRY_DB_HOST -p 3306
 
 CMD ["echo", "Installing other stuff..."]
 
@@ -41,7 +41,7 @@ CMD ["echo", "Testing mysql connection..."]
 
 RUN apt install -y mysql-client
 #RUN ip a
-#RUN mysql -uroot -proot -hmysql -e 'SELECT version()'
+RUN mysql -uroot -proot -hmysql -e 'SELECT version()'
      
 
 # ---------------------------------------------------------------------------
