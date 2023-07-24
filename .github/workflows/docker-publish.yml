@@ -40,6 +40,15 @@ jobs:
         run: |
           host=`docker network inspect -f '{{(index .IPAM.Config 0).Gateway}}' bridge`
           echo "db-host=$host" >> $GITHUB_OUTPUT
+          echo "$db-host"
+       
+      - name: Copy envs
+        run: |
+          cp -a .env-org server/.env
+          sed -i 's/127.0.0.1/${{ steps.get_host.outputs.db-host }}/g' server/.env
+          cat server/.env
+          
+          
 
       - name: Run tests
         run: |
