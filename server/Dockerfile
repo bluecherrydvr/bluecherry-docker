@@ -1,11 +1,12 @@
 # set a base image with environment to build from
 FROM ubuntu:20.04 AS baseos
-
+RUN ECHO $DB_HOST
+ARG DB_HOST=$BLUECHERRY_DB_HOST
 RUN echo $BLUECHERRY_DB_HOST
 
 ARG BLUECHERRY_GIT_BRANCH_TAG=v3.1.0-rc8
-ARG MYSQLHOST
-ENV MYSQL_HOST=MYSQLHOST
+#ARG MYSQLHOST
+#ENV MYSQL_HOST=MYSQLHOST
 
 #RUN echo "Testing github network env"
 #RUN echo ${{ steps.github-network.outputs.gateway-address }}
