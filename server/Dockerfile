@@ -1,6 +1,6 @@
 # set a base image with environment to build from
 FROM ubuntu:20.04 AS baseos
-RUN ECHO $DB_HOST
+RUN echo $DB_HOST
 ARG DB_HOST=$BLUECHERRY_DB_HOST
 RUN echo $BLUECHERRY_DB_HOST
 
