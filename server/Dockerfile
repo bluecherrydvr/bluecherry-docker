@@ -1,8 +1,8 @@
 # set a base image with environment to build from
 FROM ubuntu:20.04 AS baseos
-RUN echo $DB_HOST
-ARG DB_HOST=$BLUECHERRY_DB_HOST
-RUN echo $BLUECHERRY_DB_HOST
+#RUN echo $DB_HOST
+#ARG DB_HOST=$BLUECHERRY_DB_HOST
+#RUN echo $BLUECHERRY_DB_HOST
 
 ARG BLUECHERRY_GIT_BRANCH_TAG=v3.1.0-rc8
 #ARG MYSQLHOST
@@ -41,7 +41,7 @@ CMD ["echo", "Testing mysql connection..."]
 
 RUN apt install -y mysql-client
 #RUN ip a
-RUN mysql -uroot -proot -hmysql -e 'SELECT version()'
+RUN mysql -uroot -proot -h$BLUECHERRY_DB_HOST -e 'SELECT version()'
      
 
 # ---------------------------------------------------------------------------
