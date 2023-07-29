@@ -42,8 +42,8 @@ jobs:
     - name: Print running docker containers
       run: docker ps
       
-test:
-    runs-on: ubuntu-20.04
+#test:
+#    runs-on: ubuntu-20.04
     
   #  services:
   #    mysql:
