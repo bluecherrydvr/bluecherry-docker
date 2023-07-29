@@ -27,7 +27,7 @@ jobs:
     - name: Shutdown existing MySQL
       run: sudo service mysql stop
     - name: Set up MySQL
-      uses: cweinberger/github-actions-mysql@master
+      uses: cweinberger/github-actions-mysql
       with:
         version: 5.7
         hostPort: 33069
