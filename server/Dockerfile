@@ -138,7 +138,7 @@ ARG MYSQL_ADMIN_PASSWORD=root
 
 # Specific database credentials used by bluecherry server
 ARG BLUECHERRY_DB_USER=bluecherry
-ARG BLUECHERRY_DB_HOST=127.0.0.1
+ARG BLUECHERRY_DB_HOST=172.17.0.1
 ARG BLUECHERRY_DB_PASSWORD=qiNdklOierSZs2
 ARG BLUECHERRY_DB_NAME=bluecherry
 ARG BLUECHERRY_DB_ACCESS_HOST=%
@@ -360,11 +360,11 @@ COPY --from=bluecherry_build_cleaned \
 COPY bluecherry.conf /etc/bluecherry.conf
 
 ARG MYSQL_ADMIN_LOGIN=root
-ARG MYSQL_ADMIN_PASSWORD
+ARG MYSQL_ADMIN_PASSWORD=root
 
 # Specific database credentials used by bluecherry server
 ARG BLUECHERRY_DB_USER=bluecherry
-ARG BLUECHERRY_DB_HOST=mysql
+ARG BLUECHERRY_DB_HOST=bc-mysql
 ARG BLUECHERRY_DB_PASSWORD=bluecherry
 ARG BLUECHERRY_DB_NAME=bluecherry
 ARG BLUECHERRY_DB_ACCESS_HOST=%
