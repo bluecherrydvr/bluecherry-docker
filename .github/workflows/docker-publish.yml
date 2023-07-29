@@ -30,7 +30,7 @@ jobs:
       uses: cweinberger/github-actions-mysql@main
       with:
         version: 5.7
-        hostPort: 33069
+        hostPort: 3306
         containerPort: 3306
         rootPassword: root
         user: TestUser
