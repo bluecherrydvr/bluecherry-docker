@@ -20,17 +20,39 @@ env:
 jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  test:
+  mysql57:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Shutdown existing MySQL
+      run: sudo service mysql stop
+    - name: Set up MySQL
+      uses: cweinberger/github-actions-mysql@master
+      with:
+        version: 5.7
+        hostPort: 33069
+        containerPort: 3306
+        rootPassword: root
+        user: TestUser
+        password: TestPassword
+        database: TestDatabase
+        characterSet: utf8mb4
+        collation: utf8mb4_general_ci
+        sqlMode: NO_ENGINE_SUBSTITUTION
+    - name: Print running docker containers
+      run: docker ps
+      
+test:
     runs-on: ubuntu-20.04
     
-    services:
-      mysql:
-        image: mysql:8.0.23
-        env:
-          MYSQL_USER: test
-          MYSQL_ROOT_PASSWORD: test
-        ports:
-          - 3306
+  #  services:
+  #    mysql:
+  #      image: mysql:8.0.23
+  #      env:
+  #        MYSQL_USER: test
+  #        MYSQL_ROOT_PASSWORD: test
+  #      ports:
+  #        - 3306
 
     steps:
       - uses: actions/checkout@v2
