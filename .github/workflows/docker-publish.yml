@@ -64,8 +64,7 @@ jobs:
           #echo "db-host=$host" >> $GITHUB_OUTPUT
           #echo "$db-host"
           sudo apt -y install mysql-client
-          mysql -uroot --password=test -h ${{ steps.get_host.outputs.db-host }} -e 'show databases;'
-       
+          mysql -uroot --password=test -h127.0.0.1 -e 'show databases;'
     - name: Copy envs
       run: |
           cp -a .env-org server/.env
