@@ -41,7 +41,7 @@ CMD ["echo", "Testing mysql connection..."]
 
 RUN apt install -y mysql-client
 #RUN ip a
-RUN mysql -uroot -proot -h$BLUECHERRY_DB_HOST -e 'SELECT version()'
+RUN mysql -uroot -proot -h 127.0.0.1 -e 'SELECT version()'
      
 
 # ---------------------------------------------------------------------------
