@@ -22,7 +22,7 @@ CMD ["echo", "Testing mysql connection via nmap..."]
 
 RUN apt-get update
 RUN apt-get -y install nmap
-RUN nmap $BLUECHERRY_DB_HOST -p 3306
+#RUN nmap mysql -p 3306
 
 CMD ["echo", "Installing other stuff..."]
 
@@ -116,7 +116,7 @@ RUN apt update
 #		php-net-smtp sqlite3 nginx php-fpm php-mysql php-sqlite3 v4l-utils vainfo i965-va-driver php-gd php-curl mariadb-client python3-pip python3-distutils gnupg2
 RUN apt install --no-install-recommends -y libbsd0 libc6 libgcc-s1 libmariadb3 libopencv-core4.2 libopencv-imgcodecs4.2 libopencv-imgproc4.2 curl \
 	libssl1.1 libstdc++6 libudev1 libva-drm2 libva2 zlib1g ssl-cert ucf curl sysstat mkvtoolnix php-mail \
-	php-mail-mime php-net-smtp sqlite3 nmap nginx php-fpm php-mysql php-sqlite3 v4l-utils vainfo i965-va-driver
+	php-mail-mime php-net-smtp sqlite3 nmap nginx php-fpm php-mysql php-sqlite3 v4l-utils vainfo i965-va-driver mysql-client
 
 
 
@@ -141,7 +141,7 @@ ARG BLUECHERRY_DB_USER=bluecherry
 ARG BLUECHERRY_DB_HOST=172.17.0.1
 ARG BLUECHERRY_DB_PASSWORD=qiNdklOierSZs2
 ARG BLUECHERRY_DB_NAME=bluecherry
-ARG BLUECHERRY_DB_ACCESS_HOST=%
+ARG BLUECHERRY_DB_ACCESS_HOST='%'
 
 # User and Group info used for running bluecherry server processes
 ARG BLUECHERRY_LINUX_GROUP_NAME=bluecherry
@@ -232,7 +232,7 @@ RUN /usr/sbin/groupadd -rf \
     --comment "Bluecherry DVR" \
     --home-dir=/var/lib/bluecherry \
     --gid=$BLUECHERRY_LINUX_GROUP_NAME \
-    --groups=audio,video \
+    --groups=audio,video,render \
     --uid=$BLUECHERRY_LINUX_USER_ID \
     $BLUECHERRY_LINUX_USER_NAME \
  || echo "bluecherry user already exists"
