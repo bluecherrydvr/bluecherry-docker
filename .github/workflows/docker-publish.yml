@@ -67,6 +67,4 @@ jobs:
             file: ./server/Dockerfile
             push: true
             tags: testing
-            labels: testinglabel
-                  
-                  
+            labels: testinglabel                 
