@@ -1,9 +1,8 @@
 name: Publish Docker image
 
 on:
-#  release:
-#    types: [published]
   push:
+    # TODO: Add push type for release 
     # Publish `master` as Docker `latest` image.
     branches:
       - master
@@ -11,8 +10,9 @@ on:
     # Publish `v1.2.3` tags as releases.
     tags:
       - v*
-  pull_request:    
 
+  # Run tests for any PRs.
+  pull_request:
 
  #   steps:
 #      - uses: actions/checkout@v2
