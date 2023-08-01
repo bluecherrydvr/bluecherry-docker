@@ -1,7 +1,8 @@
-name: Docker
+name: Publish Docker image
 
 on:
   push:
+    # TODO: Add push type for release 
     # Publish `master` as Docker `latest` image.
     branches:
       - master
@@ -13,91 +14,76 @@ on:
   # Run tests for any PRs.
   pull_request:
 
-env:
-  # TODO: Change variable to your image's name.
-  IMAGE_NAME: image
-
-jobs:
-  # Run tests.
+ #   steps:
+#      - uses: actions/checkout@v2
+ # Setup mysqlserver.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  test:
-    runs-on: ubuntu-20.04
-    
-    services:
-      mysql:
-        image: mysql:8.0.23
-        env:
-          MYSQL_USER: test
-          MYSQL_ROOT_PASSWORD: test
-        ports:
-          - 3306
-
+jobs: 
+ mysql57:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+    - name: Shutdown existing MySQL
+      run: sudo service mysql stop
+    - name: Set up MySQL
+      uses: cweinberger/github-actions-mysql@main
+      with:
+        version: 5.7
+        hostPort: 3306
+        containerPort: 3306
+        rootPassword: root
+        user: TestUser
+        password: TestPassword
+        database: TestDatabase
+        characterSet: utf8mb4
+        collation: utf8mb4_general_ci
+        sqlMode: NO_ENGINE_SUBSTITUTION
+    - name: Print running docker containers
+      run: docker ps
       
-      - name: Get the mysql host
-        id: get_host
-        run: |
+# push_to_registries:
+#    - name: Push Docker image to multiple registries
+#          runs-on: ubuntu-latest
+#      permissions:
+#          packages: write
+#          contents: read
+      #steps:
+    - name: Check out the repo
+      uses: actions/checkout@v3  
+
+    - name: Get the mysql host
+#        runs-on: ubuntu-latest
+      id: get_host
+      run: |
           #host=`docker network inspect -f '{{(index .IPAM.Config 0).Gateway}}' bridge`
           #echo "db-host=$host" >> $GITHUB_OUTPUT
           #echo "$db-host"
-          sudo apt -y install mysql-client
-          mysql -uroot --password=test -h ${{ steps.get_host.outputs.db-host }} --port ${{ job.services.mysql.ports['3306'] }} -e 'show databases;'
-       
-      - name: Copy envs
-        run: |
-          cp -a .env-org server/.env
-          sed -i 's/127.0.0.1/${{ steps.get_host.outputs.db-host }}/g' server/.env
-          cat server/.env
+          #sudo apt -y install mysql-client
+          #sudo systemctl start mysql.service
+#          sleep 10
+#          mysql -uroot --password=test -h ${{ steps.get_host.outputs.db-host }} --port ${{ job.services.mysql.ports['3306'] }} -e 'show databases;'
+#      - name: Push to Docker Hub
+#        runs-on: ubuntu-latest
+ 
+    - name: Log in to Docker Hub
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      with:
+            username: curtishall
+            password: ${{ secrets.DOCKER_PASSWORD }}
           
-          
-
-      - name: Run tests
-        run: |
-          if [ -f docker-compose.test.yml ]; then
-            docker-compose --file docker-compose.test.yml build
-            docker-compose --file docker-compose.test.yml run sut
-          else
-            docker build . --file server/Dockerfile --build-arg="$db-host"
-          fi
-
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
-  push:
-    # Ensure test job passes before pushing image.
-    needs: test
-
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Build image
-        run: docker build . --file server/Dockerfile --tag $IMAGE_NAME
-
-      - name: Log into GitHub Container Registry
-      # TODO: Create a PAT with `read:packages` and `write:packages` scopes and save it as an Actions secret `CR_PAT`
-        run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Push image to GitHub Container Registry
-        run: |
-          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
-
-          # Change all uppercase to lowercase
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
-
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      with:
+            images: bluecherrydvr/bluecherry
+      
+    - name: Build and push Docker image
+      uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+      with:
+            context: .
+            file: ./server/Dockerfile
+            push: true
+            tags: testing
+            labels: testinglabel
+                  
+                  
