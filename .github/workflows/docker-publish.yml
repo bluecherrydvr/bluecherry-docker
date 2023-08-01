@@ -1,5 +1,4 @@
 name: Publish Docker image
-
 on:
   push:
     # TODO: Add push type for release 
