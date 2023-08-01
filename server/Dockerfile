@@ -45,7 +45,7 @@ RUN mysql -uroot -proot -h 172.17.0.1 -e 'SELECT version()'
 
 
 # ---------------------------------------------------------------------------
-FROM os_dev_environment as bluecherry_base_environment
+#FROM os_dev_environment as bluecherry_base_environment
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
@@ -104,7 +104,7 @@ RUN rm -rf .ccache \
 
 # ---------------------------------------------------------------------------
 # Install the bluecherry app and dependencies
-FROM baseos as bluecherry_install
+#FROM baseos as bluecherry_install
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
@@ -272,7 +272,7 @@ EXPOSE 7001/tcp 7002/tcp
 
 #ARG BLUECHERRY_GIT_BRANCH_TAG=v3.0.4
 
-FROM os_dev_environment as bluecherry_build_cleaned
+#FROM os_dev_environment as bluecherry_build_cleaned
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
