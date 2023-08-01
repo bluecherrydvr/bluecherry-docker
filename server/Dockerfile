@@ -262,12 +262,7 @@ EXPOSE 7001/tcp 7002/tcp
 # logs to be received by the docker engine (and read via `docker logs` , etc.)
 #COPY server/bc-rsyslog.conf /etc/rsyslog.d/10-bluecherry.conf
 
-# Make the previously copied scripts executable
-#RUN chmod +x /entrypoint.sh \
-# && chmod +x /bin/bc-database-create \
-# && chmod +x /bin/bc-database-upgrade
 
-#CMD "/entrypoint.sh"
 
 
 #ARG BLUECHERRY_GIT_BRANCH_TAG=v3.0.4
