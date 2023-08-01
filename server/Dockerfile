@@ -279,34 +279,6 @@ WORKDIR /root
 RUN rm -rf /usr/src/linux-headers-*
 
 
-# Remove these files -- we needed them to build the docker image, since the 
-# bluecherry installer scripts interact with the database. However, once the
-# image is created, we expect it to receive all of the settings/credentials
-# from environment variables passed in by docker or docker-compose.
-#RUN rm -f /root/.my.cnf \
-# && rm -f /etc/bluecherry.conf
-
-# When running rsyslog in a container, we need to disable imklog
-# since the in-container process won't be allowed access to it.
-#RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
-
-RUN /usr/sbin/groupadd -rf \
-    --gid=$BLUECHERRY_LINUX_GROUP_ID \
-    $BLUECHERRY_LINUX_GROUP_NAME \
- && /usr/sbin/useradd -rm \
-    --comment "Bluecherry DVR" \
-    --home-dir=/var/lib/bluecherry \
-    --gid=$BLUECHERRY_LINUX_GROUP_NAME \
-    --groups=audio,video \
-    --uid=$BLUECHERRY_LINUX_USER_ID \
-    $BLUECHERRY_LINUX_USER_NAME \
- || echo "bluecherry user already exists"
-
-RUN mkdir /recordings \
- && chown bluecherry:bluecherry /recordings
-
-EXPOSE 7001/tcp 7002/tcp 554/tcp 554/udp
-
 # This is the main script that runs as process ID 1 in the docker container
 COPY server/entrypoint.sh /entrypoint.sh
 
