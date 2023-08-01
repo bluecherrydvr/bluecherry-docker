@@ -40,7 +40,7 @@ CMD ["echo", "Installing other stuff..."]
 CMD ["echo", "Testing mysql connection..."]
 
 RUN apt install -y mysql-client
-#RUN ip a
+RUN ip a
 RUN mysql -uroot -proot -h 172.17.0.1 -e 'SELECT version()'
      
 
