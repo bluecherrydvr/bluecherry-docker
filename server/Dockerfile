@@ -278,28 +278,17 @@ WORKDIR /root
 
 RUN rm -rf /usr/src/linux-headers-*
 
-RUN rm -rf .ccache \
- && rm -rf bluecherry-apps/.git \
- && rm -rf bluecherry-apps/misc/libav \
- && rm -rf bluecherry-apps/misc/libconfig \
- && rm -rf bluecherry-apps/misc/pugixml
-
-
-# Cleanup tasks
-RUN apt-get clean \
- && rm -f bluecherry-apps/releases/bluecherry_*.deb \
- && rm -rf /var/lib/apt/lists/*
 
 # Remove these files -- we needed them to build the docker image, since the 
 # bluecherry installer scripts interact with the database. However, once the
 # image is created, we expect it to receive all of the settings/credentials
 # from environment variables passed in by docker or docker-compose.
-RUN rm -f /root/.my.cnf \
- && rm -f /etc/bluecherry.conf
+#RUN rm -f /root/.my.cnf \
+# && rm -f /etc/bluecherry.conf
 
 # When running rsyslog in a container, we need to disable imklog
 # since the in-container process won't be allowed access to it.
-RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
+#RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
 
 RUN /usr/sbin/groupadd -rf \
     --gid=$BLUECHERRY_LINUX_GROUP_ID \
