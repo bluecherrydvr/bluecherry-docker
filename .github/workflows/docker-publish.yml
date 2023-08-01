@@ -46,8 +46,9 @@ jobs:
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
           username: curtishall
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: g5sjax9Tkb2rJp
+          
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
