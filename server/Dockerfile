@@ -243,7 +243,7 @@ RUN mkdir /recordings \
 EXPOSE 7001/tcp 7002/tcp 
 
 # This is the main script that runs as process ID 1 in the docker container
-COPY entrypoint.sh /entrypoint.sh
+#COPY server/entrypoint.sh /entrypoint.sh
 
 # These scripts are wrappers used to manage the bluecherry database. They are
 # necessary because the bluecherry installer usually sets up the database, but
@@ -253,82 +253,26 @@ COPY entrypoint.sh /entrypoint.sh
 #
 # --- CREATE:    sudo docker-compose run bluecherry bc-database-create
 # --- UPGRADE:   sudo docker-compose run bluecherry bc-database-upgrade
-COPY bc-database-create.sh /bin/bc-database-create
-COPY bc-database-upgrade.sh /bin/bc-database-upgrade
+#COPY server/bc-database-create.sh /bin/bc-database-create
+#COPY server/bc-database-upgrade.sh /bin/bc-database-upgrade
 
 # This copies in a modified rsyslog config, which tells rsyslog to route
 # bluecherry logs to both /var/log/bluecherry.log (within the container) and
 # also to the STDOUT of container process with PID 1, which then allows the
 # logs to be received by the docker engine (and read via `docker logs` , etc.)
-COPY bc-rsyslog.conf /etc/rsyslog.d/10-bluecherry.conf
+#COPY server/bc-rsyslog.conf /etc/rsyslog.d/10-bluecherry.conf
 
 # Make the previously copied scripts executable
-RUN chmod +x /entrypoint.sh \
- && chmod +x /bin/bc-database-create \
- && chmod +x /bin/bc-database-upgrade
+#RUN chmod +x /entrypoint.sh \
+# && chmod +x /bin/bc-database-create \
+# && chmod +x /bin/bc-database-upgrade
 
-CMD "/entrypoint.sh"
+#CMD "/entrypoint.sh"
 
 
 #ARG BLUECHERRY_GIT_BRANCH_TAG=v3.0.4
 
-
-# ---------------------------------------------------------------------------
-# Build the base OS with some development libs and tools
-FROM baseos AS os_dev_environment
-ENV DEBIAN_FRONTEND=noninteractive
-WORKDIR /root
-
-RUN apt-get update
-
-RUN apt-get install --no-install-recommends -y \
-            git sudo openssl ca-certificates wget gnupg gnupg2 gnupg1 \
-            ssl-cert nmap curl sysstat iproute2 \
-            autoconf automake libtool build-essential gcc g++ \
-            debhelper ccache bison flex texinfo yasm cmake
-
-RUN apt-get install --no-install-recommends -y \
-            libbsd-dev libopencv-dev libudev-dev libva-dev \
-            linux-image-generic linux-headers-generic \
-            libmysqlclient-dev rsyslog
-            
-
-# ---------------------------------------------------------------------------
-FROM os_dev_environment as bluecherry_base_environment
-ENV DEBIAN_FRONTEND=noninteractive
-WORKDIR /root
-
-RUN git clone --progress --depth 1 \
-    http://github.com/bluecherrydvr/bluecherry-apps.git \
- && cd bluecherry-apps \
- && git checkout $BLUECHERRY_GIT_BRANCH_TAG
-
-RUN apt-get --no-install-recommends -y install \
-        libbsd0 libc6 libgcc1 libssl1.1 libstdc++6 libudev1 \
-        zlib1g ucf mkvtoolnix v4l-utils vainfo i965-va-driver
-
-RUN apt-get --no-install-recommends -y install \
-        php-mail php-mail-mime php-net-smtp php-gd php-curl \
-        php-mysql php-sqlite3 \
-#        apache2 libapache2-mod-php mysql-client sqlite3
-	nginx default-mysql-client sqlite3
-
-# ---------------------------------------------------------------------------
-# Build the bluecherry app and dependencies. This is done in a separate
-# image because there are many ways it can fail and then we save time
-# by being able to reuse prior containers leading up to this build.
-FROM bluecherry_base_environment as bluecherry_build
-ENV DEBIAN_FRONTEND=noninteractive
-WORKDIR /root
-
-COPY depends/onvif_tool bluecherry-apps/utils/onvif_tool
-
-RUN cd bluecherry-apps \
- && ./scripts/build_pkg_native.sh
-
-
-# ---------------------------------------------------------------------------
-FROM bluecherry_build as bluecherry_build_cleaned
+FROM os_dev_environment as bluecherry_build_cleaned
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
@@ -340,79 +284,6 @@ RUN rm -rf .ccache \
  && rm -rf bluecherry-apps/misc/libconfig \
  && rm -rf bluecherry-apps/misc/pugixml
 
-
-# ---------------------------------------------------------------------------
-# Install the bluecherry app and dependencies
-FROM baseos as bluecherry_install
-ENV DEBIAN_FRONTEND=noninteractive
-WORKDIR /root
-
-COPY --from=bluecherry_build_cleaned \
-    /root/bluecherry-apps/releases/bluecherry_*.deb \
-    /root/bluecherry-apps/releases/
-
-# This step is needed if/when building a new bluecherry docker container
-# that will connect to an existing bluecherry database. In this case, the
-# bluecherry installer will see the existing database, and it needs the
-# /etc/bluecherry.conf file to tell it that it is okay to connect to (and
-# modify) that database
-#
-COPY bluecherry.conf /etc/bluecherry.conf
-
-ARG MYSQL_ADMIN_LOGIN=root
-ARG MYSQL_ADMIN_PASSWORD=root
-
-# Specific database credentials used by bluecherry server
-ARG BLUECHERRY_DB_USER=bluecherry
-ARG BLUECHERRY_DB_HOST=bc-mysql
-ARG BLUECHERRY_DB_PASSWORD=bluecherry
-ARG BLUECHERRY_DB_NAME=bluecherry
-ARG BLUECHERRY_DB_ACCESS_HOST=%
-
-# User and Group info used for running bluecherry server processes
-ARG BLUECHERRY_LINUX_GROUP_NAME=bluecherry
-ARG BLUECHERRY_LINUX_GROUP_ID=1000
-ARG BLUECHERRY_LINUX_USER_NAME=bluecherry
-ARG BLUECHERRY_LINUX_USER_ID=1000
-
-RUN apt-get update \
- && apt-get install -y \
-        rsyslog nmap curl sysstat iproute2 \
-        openssl ca-certificates ssl-cert gnupg gnupg2 gnupg1
-
-RUN { \
-        echo "[client]";                        \
-        echo "user=$MYSQL_ADMIN_LOGIN";         \
-        echo "password=$MYSQL_ADMIN_PASSWORD";  \
-        echo "[mysql]";                         \
-        echo "user=$MYSQL_ADMIN_LOGIN";         \
-        echo "password=$MYSQL_ADMIN_PASSWORD";  \
-        echo "[mysqldump]";                     \
-        echo "user=$MYSQL_ADMIN_LOGIN";         \
-        echo "password=$MYSQL_ADMIN_PASSWORD";  \
-        echo "[mysqldiff]";                     \
-        echo "user=$MYSQL_ADMIN_LOGIN";         \
-        echo "password=$MYSQL_ADMIN_PASSWORD";  \
-    } > /root/.my.cnf
-
-# NOTE: The line "export host=$BLUECHERRY_DB_HOST" ... This is required 
-# due to a weird global check of this env var by the "check_mysql_admin"
-# function in /usr/share/bluecherry/bc_db_tool.sh ... which doesn't accept
-# the db host as an argument like most of the other functions in that file.
-# --- The Specific problem line is:
-# if ! echo "show databases" | mysql_wrapper -h"${host}" -u"$MYSQL_ADMIN_LOGIN" &>/dev/null
-#
-RUN { \
-        echo bluecherry bluecherry/mysql_admin_login string $MYSQL_ADMIN_LOGIN; \
-        echo bluecherry bluecherry/mysql_admin_password password $MYSQL_ADMIN_PASSWORD; \
-        echo bluecherry bluecherry/db_host string $BLUECHERRY_DB_HOST; \
-        echo bluecherry bluecherry/db_userhost string $BLUECHERRY_DB_ACCESS_HOST; \
-        echo bluecherry bluecherry/db_name string $BLUECHERRY_DB_NAME; \
-        echo bluecherry bluecherry/db_user string $BLUECHERRY_DB_USER; \
-        echo bluecherry bluecherry/db_password password $BLUECHERRY_DB_PASSWORD; \
-    } | debconf-set-selections \
- && export host=$BLUECHERRY_DB_HOST \
- && apt install -y ./bluecherry-apps/releases/bluecherry_*.deb
 
 # Cleanup tasks
 RUN apt-get clean \
@@ -448,7 +319,7 @@ RUN mkdir /recordings \
 EXPOSE 7001/tcp 7002/tcp 554/tcp 554/udp
 
 # This is the main script that runs as process ID 1 in the docker container
-COPY entrypoint.sh /entrypoint.sh
+COPY server/entrypoint.sh /entrypoint.sh
 
 # These scripts are wrappers used to manage the bluecherry database. They are
 # necessary because the bluecherry installer usually sets up the database, but
@@ -458,14 +329,14 @@ COPY entrypoint.sh /entrypoint.sh
 #
 # --- CREATE:    sudo docker-compose run bluecherry bc-database-create
 # --- UPGRADE:   sudo docker-compose run bluecherry bc-database-upgrade
-COPY bc-database-create.sh /bin/bc-database-create
-COPY bc-database-upgrade.sh /bin/bc-database-upgrade
+COPY server/bc-database-create.sh /bin/bc-database-create
+COPY server/bc-database-upgrade.sh /bin/bc-database-upgrade
 
 # This copies in a modified rsyslog config, which tells rsyslog to route
 # bluecherry logs to both /var/log/bluecherry.log (within the container) and
 # also to the STDOUT of container process with PID 1, which then allows the
 # logs to be received by the docker engine (and read via `docker logs` , etc.)
-COPY bc-rsyslog.conf /etc/rsyslog.d/10-bluecherry.conf
+COPY server/bc-rsyslog.conf /etc/rsyslog.d/10-bluecherry.conf
 
 # Make the previously copied scripts executable
 RUN chmod +x /entrypoint.sh \
