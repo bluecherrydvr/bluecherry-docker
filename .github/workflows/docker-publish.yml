@@ -37,7 +37,7 @@ jobs:
           #echo "db-host=$host" >> $GITHUB_OUTPUT
           #echo "$db-host"
           sudo apt -y install mysql-client
-          sudo service mysql-server start
+          sudo systemctl start mysql.service
 #          sleep 10
 #          mysql -uroot --password=test -h ${{ steps.get_host.outputs.db-host }} --port ${{ job.services.mysql.ports['3306'] }} -e 'show databases;'
 #      - name: Push to Docker Hub
