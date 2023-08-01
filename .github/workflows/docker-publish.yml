@@ -19,50 +19,71 @@ on:
  # Setup mysqlserver.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
 jobs: 
-  push_to_registries:
-    name: Push Docker image to multiple registries
+ mysql57:
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3  
+    - uses: actions/checkout@v2
+    - name: Shutdown existing MySQL
+      run: sudo service mysql stop
+    - name: Set up MySQL
+      uses: cweinberger/github-actions-mysql@main
+      with:
+        version: 5.7
+        hostPort: 3306
+        containerPort: 3306
+        rootPassword: root
+        user: TestUser
+        password: TestPassword
+        database: TestDatabase
+        characterSet: utf8mb4
+        collation: utf8mb4_general_ci
+        sqlMode: NO_ENGINE_SUBSTITUTION
+    - name: Print running docker containers
+      run: docker ps
+      
+ push_to_registries:
+        name: Push Docker image to multiple registries
+        runs-on: ubuntu-latest
+        permissions:
+          packages: write
+          contents: read
+        steps:
+        - name: Check out the repo
+          uses: actions/checkout@v3  
 
-      - name: Get the mysql host
+        - name: Get the mysql host
 #        runs-on: ubuntu-latest
-        id: get_host
-        run: |
+          id: get_host
+          run: |
           #host=`docker network inspect -f '{{(index .IPAM.Config 0).Gateway}}' bridge`
           #echo "db-host=$host" >> $GITHUB_OUTPUT
           #echo "$db-host"
-          sudo apt -y install mysql-client
-          sudo systemctl start mysql.service
+          #sudo apt -y install mysql-client
+          #sudo systemctl start mysql.service
 #          sleep 10
 #          mysql -uroot --password=test -h ${{ steps.get_host.outputs.db-host }} --port ${{ job.services.mysql.ports['3306'] }} -e 'show databases;'
 #      - name: Push to Docker Hub
 #        runs-on: ubuntu-latest
-
-         
-      - name: Log in to Docker Hub
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-        with:
-          username: curtishall
-          password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+        - name: Log in to Docker Hub
+          uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+          with:
+            username: curtishall
+            password: ${{ secrets.DOCKER_PASSWORD }}
           
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: bluecherrydvr/bluecherry-server
+        - name: Extract metadata (tags, labels) for Docker
+          id: meta
+          uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+          with:
+            images: bluecherrydvr/bluecherry-server
       
-      - name: Build and push Docker image
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-        with:
-          context: .
-          file: ./server/Dockerfile
-          push: true
-          tags: testing
-          labels: testinglabel
+        - name: Build and push Docker image
+          uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+          with:
+            context: .
+            file: ./server/Dockerfile
+            push: true
+            tags: testing
+            labels: testinglabel
                   
                   
