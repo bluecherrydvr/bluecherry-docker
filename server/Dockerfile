@@ -275,7 +275,7 @@ RUN rm -rf /usr/src/linux-headers-*
 
 
 # This is the main script that runs as process ID 1 in the docker container
-COPY server/entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 
 # These scripts are wrappers used to manage the bluecherry database. They are
 # necessary because the bluecherry installer usually sets up the database, but
@@ -285,8 +285,8 @@ COPY server/entrypoint.sh /entrypoint.sh
 #
 # --- CREATE:    sudo docker-compose run bluecherry bc-database-create
 # --- UPGRADE:   sudo docker-compose run bluecherry bc-database-upgrade
-COPY server/bc-database-create.sh /bin/bc-database-create
-COPY server/bc-database-upgrade.sh /bin/bc-database-upgrade
+COPY bc-database-create.sh /bin/bc-database-create
+COPY bc-database-upgrade.sh /bin/bc-database-upgrade
 
 # This copies in a modified rsyslog config, which tells rsyslog to route
 # bluecherry logs to both /var/log/bluecherry.log (within the container) and
