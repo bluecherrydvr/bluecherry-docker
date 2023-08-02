@@ -292,8 +292,8 @@ COPY server/bc-database-upgrade.sh /bin/bc-database-upgrade
 # bluecherry logs to both /var/log/bluecherry.log (within the container) and
 # also to the STDOUT of container process with PID 1, which then allows the
 # logs to be received by the docker engine (and read via `docker logs` , etc.)
-RUN ls -l /etc/rsyslog.d
-COPY ./server/bc-rsyslog.conf /etc/rsyslog.d/10-bluecherry.conf
+RUN ls -ltrd /etc/rsyslog.d
+COPY bc-rsyslog.conf /etc/rsyslog.d/10-bluecherry.conf
 
 # Make the previously copied scripts executable
 RUN chmod +x /entrypoint.sh \
