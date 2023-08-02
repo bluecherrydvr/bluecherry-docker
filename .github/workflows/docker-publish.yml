@@ -76,6 +76,6 @@ jobs:
   #          username: curtishall
   #          password: ${{ secrets.DOCKER_PASSWORD }}   
 #            file: ./server/Dockerfile
-       #     push: true
+            push: true
             tags: bluecherrydvr/bluecherry:latest
             labels: testinglabel                 
