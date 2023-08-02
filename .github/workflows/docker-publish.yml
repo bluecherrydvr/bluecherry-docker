@@ -49,7 +49,7 @@ jobs:
           contents: read
       steps:
       - name: Check out the repo
-        uses: actions/checkout@v4  
+        uses: actions/checkout@v3
       - name: Log in to Docker Hub
         uses: docker/build-push-action@v2
         with:
@@ -61,7 +61,7 @@ jobs:
         with:
             images: bluecherrydvr/bluecherry
       - name: Build and push Docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
             context: .
             file: ./server/Dockerfile
