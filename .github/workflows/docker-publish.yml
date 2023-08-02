@@ -25,21 +25,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Shutdown existing MySQL
       run: sudo service mysql stop
-    - name: Set up MySQL
-      uses: cweinberger/github-actions-mysql@main
-      with:
-        version: 5.7
-        hostPort: 3306
-        containerPort: 3306
-        rootPassword: root
-        user: TestUser
-        password: TestPassword
-        database: TestDatabase
-        characterSet: utf8mb4
-        collation: utf8mb4_general_ci
-        sqlMode: NO_ENGINE_SUBSTITUTION
-    - name: Print running docker containers
-      run: docker ps
+ 
       
  push_to_registries:
     #- name: Push Docker image to multiple registries
@@ -48,6 +34,22 @@ jobs:
           packages: write
           contents: read
       steps:
+      - name: Set up MySQL
+        uses: cweinberger/github-actions-mysql@main
+        with:
+          version: 5.7
+          hostPort: 3306
+          containerPort: 3306
+          rootPassword: root
+          user: TestUser
+          password: TestPassword
+          database: TestDatabase
+          characterSet: utf8mb4
+          collation: utf8mb4_general_ci
+          sqlMode: NO_ENGINE_SUBSTITUTION
+        
+      - name: Print running docker containers
+        run: docker ps
       - name: Check out the repo
         uses: actions/checkout@v3
       - name: Wait for mysql
