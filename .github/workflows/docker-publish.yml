@@ -63,9 +63,9 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4     
         with:
-            working-directory: server/
-            context: .
-            file: Dockerfile
+            #working-directory: server/
+            context: ./server
+            file: ./server/Dockerfile
             push: true
             tags: bluecherrydvr/bluecherry:latest
             labels: testinglabel                 
