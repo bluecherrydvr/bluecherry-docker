@@ -108,7 +108,7 @@ ARG BLUECHERRY_LINUX_USER_ID=1000
 RUN apt-get update \
  && apt-get install -y \
         rsyslog nmap curl sysstat iproute2 \
-        openssl ca-certificates ssl-cert gnupg gnupg2 gnupg1
+        openssl ca-certificates ssl-cert gnupg gnupg2 gnupg1 sudo
 
 RUN { \
         echo "[client]";                        \
@@ -142,7 +142,7 @@ RUN { \
         echo bluecherry bluecherry/db_password password $BLUECHERRY_DB_PASSWORD; \
     } | debconf-set-selections \
  && export host=$BLUECHERRY_DB_HOST \
- && apt install -y ./bluecherry-apps/releases/bluecherry_*.deb
+ && apt install -y --no-install-recommends ./bluecherry-apps/releases/bluecherry_*.deb
 
 # Cleanup tasks
 RUN apt-get clean \
