@@ -223,7 +223,7 @@ RUN rm -f /etc/bluecherry.conf
 
 # When running rsyslog in a container, we need to disable imklog
 # since the in-container process won't be allowed access to it.
-#RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
+RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
 
 RUN /usr/sbin/groupadd -rf \
     --gid=$BLUECHERRY_LINUX_GROUP_ID \
