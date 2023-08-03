@@ -29,7 +29,7 @@ FROM os_dev_environment as bluecherry_base_environment
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
-RUN git clone --progress --depth 1 \
+RUN git clone --recurse-submodules --progress --depth 1 \
     http://github.com/bluecherrydvr/bluecherry-apps.git \
  && cd bluecherry-apps \
  && git checkout $BLUECHERRY_GIT_BRANCH_TAG
