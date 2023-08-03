@@ -311,6 +311,8 @@ install_suse_packages() {
 install_arch_packages() {
   pacman -Syu --noconfirm git
   install_docker
+  systemctl start docker
+  systemctl enable docker
   pacman -Syu --noconfirm docker-compose
 }
 
