@@ -87,7 +87,7 @@ COPY --from=bluecherry_build_cleaned \
 # /etc/bluecherry.conf file to tell it that it is okay to connect to (and
 # modify) that database
 #
-COPY bluecherry.conf /etc/bluecherry.conf
+#COPY bluecherry.conf /etc/bluecherry.conf
 
 ARG MYSQL_ADMIN_LOGIN=root
 ARG MYSQL_ADMIN_PASSWORD=root
