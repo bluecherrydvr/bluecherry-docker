@@ -204,3 +204,4 @@ RUN chmod +x /entrypoint.sh \
 
 CMD rm -f /var/run/rsyslogd.pid
 CMD "/entrypoint.sh"
+CMD ["nginx", "-g", "daemon off;"]
