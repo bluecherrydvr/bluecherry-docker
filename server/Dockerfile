@@ -202,4 +202,5 @@ RUN chmod +x /entrypoint.sh \
  && chmod +x /bin/bc-database-create \
  && chmod +x /bin/bc-database-upgrade
 
+CMD rm -f /var/run/rsyslogd.pid && rsyslogd -n
 CMD "/entrypoint.sh"
