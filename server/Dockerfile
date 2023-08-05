@@ -203,6 +203,6 @@ RUN chmod +x /entrypoint.sh \
  && chmod +x /bin/bc-database-upgrade
 
 CMD rm -f /var/run/rsyslogd.pid
-CMD service rsyslog start
-CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
+#CMD service rsyslog start
 CMD "/entrypoint.sh"
+CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
