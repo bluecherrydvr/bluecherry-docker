@@ -108,7 +108,7 @@ ARG BLUECHERRY_LINUX_USER_ID=1000
 RUN apt-get update \
  && apt-get install -y \
         rsyslog nmap curl sysstat iproute2 \
-        openssl ca-certificates ssl-cert gnupg gnupg2 gnupg1 sudo mysql-client python3-pip wget curl
+        openssl ca-certificates ssl-cert gnupg gnupg2 gnupg1 sudo mysql-client python3-pip wget curl nano
 
 RUN { \
         echo "[client]";                        \
@@ -203,5 +203,5 @@ RUN chmod +x /entrypoint.sh \
  && chmod +x /bin/bc-database-upgrade
 
 CMD rm -f /var/run/rsyslogd.pid
-CMD "/entrypoint.sh"
 CMD ["nginx", "-g", "daemon off;"]
+CMD "/entrypoint.sh"
