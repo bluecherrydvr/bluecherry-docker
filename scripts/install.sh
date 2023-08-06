@@ -311,6 +311,8 @@ install_suse_packages() {
 install_arch_packages() {
   pacman -Syu --noconfirm git
   install_docker
+  sed -i 's/^LimitNOFILE=infinity$/LimitNOFILE=1048576/'  /usr/lib/systemd/system/docker.service
+  sed -i 's/^LimitNOFILE=infinity$/LimitNOFILE=1048576/'  /usr/lib/systemd/system/containerd.service
   systemctl start docker
   systemctl enable docker
   pacman -Syu --noconfirm docker-compose
