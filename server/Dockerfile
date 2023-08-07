@@ -33,7 +33,7 @@ RUN git clone --recurse-submodules --progress --depth 1 \
     http://github.com/bluecherrydvr/bluecherry-apps.git \
  && cd bluecherry-apps \
  && git checkout $BLUECHERRY_GIT_BRANCH_TAG \
- && sed -i 's/#define PRODUCT_VERSION "3.1.0-rc8"/#define PRODUCT_VERSION "3.1.0-rc8-docker"/' ‎server/v3license_processor.h
+ && sed -i 's/#define PRODUCT_VERSION "3.1.0-rc8"/#define PRODUCT_VERSION "3.1.0-rc8-docker"/' server/v3license_processor.h
 
 RUN apt-get --no-install-recommends -y install \
         libbsd0 libc6 libgcc1 libssl1.1 libstdc++6 libudev1 \
