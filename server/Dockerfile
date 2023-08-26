@@ -203,7 +203,7 @@ RUN chmod +x /entrypoint.sh \
  && chmod +x /bin/bc-database-create \
  && chmod +x /bin/bc-database-upgrade
 
-CMD rm -f /var/run/rsyslogd.pid
+#CMD rm -f /var/run/rsyslogd.pid
 #CMD ["/usr/sbin/rsyslogd", "-n", "-f", "/etc/rsyslog.conf"]
 #CMD service rsyslog start
 CMD "/entrypoint.sh"
