@@ -1,7 +1,7 @@
 # set a base image with environment to build from
 FROM ubuntu:20.04 AS baseos
 
-ARG BLUECHERRY_GIT_BRANCH_TAG="rc9-testing"
+ARG BLUECHERRY_GIT_BRANCH_TAG=rc9-testing
 
 
 # ---------------------------------------------------------------------------
