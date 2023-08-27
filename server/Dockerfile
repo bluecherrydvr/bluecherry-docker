@@ -207,4 +207,4 @@ RUN chmod +x /entrypoint.sh \
 #CMD ["/usr/sbin/rsyslogd", "-n", "-f", "/etc/rsyslog.conf"]
 #CMD service rsyslog start
 CMD "/entrypoint.sh"
-#CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
+CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
