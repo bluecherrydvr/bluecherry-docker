@@ -30,10 +30,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
 RUN git clone --recurse-submodules --progress --depth 1 \
-    http://github.com/bluecherrydvr/bluecherry-apps.git \
- && cd bluecherry-apps \
- && git checkout rc9-testing
-RUN pwd && sed -i 's/#define PRODUCT_VERSION "3.1.0-rc9"/#define PRODUCT_VERSION "3.1.0-rc9-docker"/' server/v3license_processor.h
+    http://github.com/bluecherrydvr/bluecherry-apps.git 
+RUN cd bluecherry-apps 
+RUN git checkout rc9-testing
+RUN pwd 
+RUN sed -i 's/#define PRODUCT_VERSION "3.1.0-rc9"/#define PRODUCT_VERSION "3.1.0-rc9-docker"/' server/v3license_processor.h
 
 RUN apt-get --no-install-recommends -y install \
         libbsd0 libc6 libgcc1 libssl1.1 libstdc++6 libudev1 \
