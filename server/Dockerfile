@@ -1,7 +1,7 @@
 # set a base image with environment to build from
 FROM ubuntu:20.04 AS baseos
 
-ARG BLUECHERRY_GIT_BRANCH_TAG=rc9-testing
+ARG BLUECHERRY_GIT_BRANCH_TAG=master
 
 
 # ---------------------------------------------------------------------------
@@ -30,9 +30,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
 RUN git clone --recurse-submodules --progress --depth 1 \
-    http://github.com/bluecherrydvr/bluecherry-apps.git 
-RUN cd bluecherry-apps && pwd && git fetch --all && git checkout rc9-testing && sed -i 's/#define PRODUCT_VERSION "3.1.0-rc9"/#define PRODUCT_VERSION "3.1.0-rc9-docker"/' server/v3license_processor.h
+    http://github.com/bluecherrydvr/bluecherry-apps.git \
+ && cd bluecherry-apps \
+ && git checkout $BLUECHERRY_GIT_BRANCH_TAG \
+ && sed -i 's/#define PRODUCT_VERSION "3.1.0-rc9"/#define PRODUCT_VERSION "3.1.0-rc9-docker"/' server/v3license_processor.h
 
+ 
 RUN apt-get --no-install-recommends -y install \
         libbsd0 libc6 libgcc1 libssl1.1 libstdc++6 libudev1 \
         zlib1g ucf mkvtoolnix v4l-utils vainfo i965-va-driver
