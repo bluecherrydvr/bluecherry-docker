@@ -3,7 +3,6 @@ FROM ubuntu:20.04 AS baseos
 
 ARG BLUECHERRY_GIT_BRANCH_TAG=master
 
-
 # ---------------------------------------------------------------------------
 # Build the base OS with some development libs and tools
 FROM baseos AS os_dev_environment
