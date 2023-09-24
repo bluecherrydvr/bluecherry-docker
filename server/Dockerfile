@@ -48,7 +48,7 @@ RUN apt-get --no-install-recommends -y install \
 # Build the bluecherry app and dependencies. This is done in a separate
 # image because there are many ways it can fail and then we save time
 # by being able to reuse prior containers leading up to this build.
-FROM bluecherry_base_environment as bluecherry_build
+#FROM bluecherry_base_environment as bluecherry_build
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
@@ -59,7 +59,7 @@ RUN cd bluecherry-apps \
 
 
 # ---------------------------------------------------------------------------
-FROM bluecherry_build as bluecherry_build_cleaned
+#FROM bluecherry_build as bluecherry_build_cleaned
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
@@ -74,13 +74,13 @@ RUN rm -rf .ccache \
 
 # ---------------------------------------------------------------------------
 # Install the bluecherry app and dependencies
-FROM baseos as bluecherry_install
+#FROM baseos as bluecherry_install
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
-COPY --from=bluecherry_build_cleaned \
-    /root/bluecherry-apps/releases/bluecherry_*.deb \
-    /root/bluecherry-apps/releases/ 
+#COPY --from=bluecherry_build_cleaned \
+#    /root/bluecherry-apps/releases/bluecherry_*.deb \
+#    /root/bluecherry-apps/releases/ 
 
 RUN ls -l /root/bluecherry-apps/releases/
 
