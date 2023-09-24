@@ -111,7 +111,7 @@ ARG BLUECHERRY_LINUX_USER_ID=1000
 RUN apt-get update \
  && apt-get install -y \
         rsyslog nmap curl sysstat iproute2 \
-        openssl ca-certificates ssl-cert gnupg gnupg2 gnupg1 sudo mysql-client python3-pip wget curl nano
+        openssl ca-certificates ssl-cert gnupg gnupg2 gnupg1 sudo mysql-client python3-pip wget curl nano cron
 
 RUN { \
         echo "[client]";                        \
