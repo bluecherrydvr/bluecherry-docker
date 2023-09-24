@@ -80,7 +80,7 @@ WORKDIR /root
 
 COPY --from=bluecherry_build_cleaned \
     /root/bluecherry-apps/releases/bluecherry_*.deb \
-    /root/bluecherry-apps/releases/
+    /root/bluecherry-apps/releases/ 
 
 RUN ls -l /root/bluecherry-apps/releases/
 
@@ -149,7 +149,7 @@ RUN { \
 
 # Cleanup tasks
 RUN apt-get clean \
- && rm -f bluecherry-apps/releases/bluecherry_*.deb \
+# && rm -f bluecherry-apps/releases/bluecherry_*.deb \
  && rm -rf /var/lib/apt/lists/*
 
 # Remove these files -- we needed them to build the docker image, since the 
