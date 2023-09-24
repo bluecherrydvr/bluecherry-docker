@@ -74,7 +74,7 @@ RUN rm -rf .ccache \
 
 # ---------------------------------------------------------------------------
 # Install the bluecherry app and dependencies
-FROM baseos as bluecherry_install
+#FROM baseos as bluecherry_install
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
