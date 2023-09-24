@@ -78,9 +78,9 @@ FROM baseos as bluecherry_install
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
-#COPY --from=bluecherry_build_cleaned \
-#    /root/bluecherry-apps/releases/bluecherry_*.deb \
-#    /root/bluecherry-apps/releases/ 
+COPY --from=bluecherry_build_cleaned \
+    /root/bluecherry-apps/releases/bluecherry_*.deb \
+    /root/bluecherry-apps/releases/ 
 
 RUN ls -l /root/bluecherry-apps/releases/
 
