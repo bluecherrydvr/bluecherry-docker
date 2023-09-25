@@ -50,6 +50,10 @@ chown bluecherry:bluecherry /var/lib/bluecherry/recordings
 # the location permissions have to be reset on every start of the container:
 chmod 777 /proc/self/fd/1
 
+# Hack to fix race condition where rsyslog starts too soon and throws errors
+# https://github.com/bluecherrydvr/bluecherry-docker/issues/26
+
+sleep 5
 
 echo "> /usr/sbin/rsyslogd"
 /usr/sbin/rsyslogd
