@@ -208,6 +208,7 @@ RUN chmod +x /entrypoint.sh \
 #CMD rm -f /var/run/rsyslogd.pid
 #CMD ["/usr/sbin/rsyslogd", "-n", "-f", "/etc/rsyslog.conf"]
 #CMD service rsyslog start
+CMD /usr/sbin/php-fpm7.4 -D
 CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
 CMD "/entrypoint.sh"
 
