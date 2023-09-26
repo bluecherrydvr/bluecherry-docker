@@ -65,6 +65,9 @@ fi
 
 exec "$@"
 
+/etc/init.d/php7.4-fpm start
+
+
 echo "> /usr/sbin/nginx"
 #source /etc/apache2/envvars
 /usr/sbin/nginx
