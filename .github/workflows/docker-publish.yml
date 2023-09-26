@@ -79,5 +79,5 @@ jobs:
   #          password: ${{ secrets.DOCKER_PASSWORD }}   
 #            file: ./server/Dockerfile
             push: true
-            tags: bluecherrydvr/bluecherry:citesting
+            tags: bluecherrydvr/bluecherry:unstable
             labels: github_ci                 
