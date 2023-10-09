@@ -76,7 +76,7 @@ Create a password for the mysql bluecherry user
 "
 
 echo "Time Zone (i.e. - America/Chicago): "
-read timezone
+read timezoneset
 
 #read -p "Time Zone (i.e. - America/Chicago)：" timezone
 #timezoneset="${timezone:=American/Chicago}"
@@ -257,7 +257,7 @@ case $distribution in
   "debian" | "ubuntu")
     install_debian_packages
     ;;
-  "centos" | "rhel" | "fedora")
+  "centos" | "rhel" | "fedora" | "rocky")
     install_redhat_packages
     ;;
   "sles" | "opensuse" | "suse")
