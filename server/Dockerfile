@@ -22,7 +22,6 @@ RUN apt-get install --no-install-recommends -y \
             linux-image-generic linux-headers-generic \
             libmysqlclient-dev rsyslog
             
-
 # ---------------------------------------------------------------------------
 FROM os_dev_environment as bluecherry_base_environment
 ENV DEBIAN_FRONTEND=noninteractive
