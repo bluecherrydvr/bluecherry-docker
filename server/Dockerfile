@@ -204,6 +204,7 @@ RUN chmod +x /entrypoint.sh \
  && chmod +x /bin/bc-database-create \
  && chmod +x /bin/bc-database-upgrade
 
+RUN chown bluecherry.bluecherry -R /var/lib/bluecherry
 #CMD rm -f /var/run/rsyslogd.pid
 #CMD ["/usr/sbin/rsyslogd", "-n", "-f", "/etc/rsyslog.conf"]
 #CMD service rsyslog start
