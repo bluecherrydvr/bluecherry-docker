@@ -15,7 +15,7 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ADMIN_PASSWORD
       TZ: $TZ
 
-  bc-server:
+  bluecherry:
     image: bluecherrydvr/bluecherry:latest
     container_name: bc-server
     cap_add:
