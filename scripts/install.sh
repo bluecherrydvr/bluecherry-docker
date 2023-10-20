@@ -257,7 +257,7 @@ case $distribution in
   "debian" | "ubuntu")
     install_debian_packages
     ;;
-  "centos" | "rhel" | "fedora" | "rocky")
+  "centos" | "rhel" | "fedora" | "rocky" | "Rocky")
     install_redhat_packages
     ;;
   "sles" | "opensuse" | "suse")
