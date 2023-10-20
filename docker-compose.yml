@@ -15,7 +15,7 @@ services:
       MYSQL_ROOT_PASSWORD: $MYSQL_ADMIN_PASSWORD
       TZ: $TZ
 
-  bluecherry:
+  bc-server:
     image: bluecherrydvr/bluecherry:latest
     container_name: bc-server
     cap_add:
@@ -39,6 +39,8 @@ services:
     volumes:
       - ./recordings:/var/lib/bluecherry/recordings
       - ./data/bconf:/var/lib/bluecherry/.local/share/data/bconf
+      - ./data/letsencrypt:/usr/share/bluecherry/nginx-includes/letsencrypt
+      - ./data/backups:/usr/share/bluecherry/backups
       # - ./server/bluecherry.conf:/etc/bluecherry.conf
     # Enable this only if you have a supported VAAPI device and /dev/dri exists on the host system.
     # devices:
