@@ -57,6 +57,7 @@ chmod 777 /proc/self/fd/1
 sleep 5
 
 echo "> /usr/sbin/rsyslogd"
+rm -f /run/rsyslogd.pid
 /usr/sbin/rsyslogd
 status=$?
 if [ $status -ne 0 ]; then
