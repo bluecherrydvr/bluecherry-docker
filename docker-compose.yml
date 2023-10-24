@@ -63,8 +63,8 @@ services:
 #        - "25"
       dns:
          - 8.8.8.8
-      ports:
-        - "25:25/tcp"
+#      ports:
+#        - "25:25/tcp"
       env_file:
         - .mailenv
       restart: always
