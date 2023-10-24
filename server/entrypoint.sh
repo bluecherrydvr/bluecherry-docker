@@ -52,12 +52,17 @@ chmod 777 /proc/self/fd/1
 
 
 echo "> /usr/sbin/rsyslogd"
+rm -f /run/rsyslogd.pid
 /usr/sbin/rsyslogd
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start apache2 web server: $status"
   exit $status
 fi
+
+exec "$@"
+
+/etc/init.d/php7.4-fpm start
 
 
 echo "> /usr/sbin/apache2"
