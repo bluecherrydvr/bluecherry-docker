@@ -204,6 +204,9 @@ RUN chmod +x /entrypoint.sh \
  && chmod +x /bin/bc-database-create \
  && chmod +x /bin/bc-database-upgrade
 
+# Delete the default nginx config, we don't need it.
+RUN rm /etc/nginx/sites-enabled/default
+
 RUN chown bluecherry.bluecherry -R /var/lib/bluecherry
 #CMD rm -f /var/run/rsyslogd.pid
 #CMD ["/usr/sbin/rsyslogd", "-n", "-f", "/etc/rsyslog.conf"]
