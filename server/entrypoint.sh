@@ -54,9 +54,11 @@ chmod 777 /proc/self/fd/1
 # Hack to fix race condition where rsyslog starts too soon and throws errors
 # https://github.com/bluecherrydvr/bluecherry-docker/issues/26
 
+# sleep for 5 for good measure
 sleep 5
 
 echo "> /usr/sbin/rsyslogd"
+# rm rsyslog.pid to prevent respawning
 rm -f /run/rsyslogd.pid
 /usr/sbin/rsyslogd
 status=$?
