@@ -42,6 +42,7 @@ echo "> Writing /etc/bluecherry.conf"
 
 echo "> chown bluecherry:bluecherry /var/lib/bluecherry/recordings"
 chown bluecherry:bluecherry /var/lib/bluecherry/recordings
+chown -R bluecherry:bluecherry /var/lib/bluecherry/.local/share/data/
 
 
 # The bluecherry container's Dockerfile sets rsyslog to route the bluecherry
@@ -50,8 +51,15 @@ chown bluecherry:bluecherry /var/lib/bluecherry/recordings
 # the location permissions have to be reset on every start of the container:
 chmod 777 /proc/self/fd/1
 
+# Hack to fix race condition where rsyslog starts too soon and throws errors
+# https://github.com/bluecherrydvr/bluecherry-docker/issues/26
+
+# sleep for 5 for good measure
+sleep 5
 
 echo "> /usr/sbin/rsyslogd"
+# rm rsyslog.pid to prevent respawning
+rm -f /run/rsyslogd.pid
 /usr/sbin/rsyslogd
 status=$?
 if [ $status -ne 0 ]; then
@@ -59,57 +67,19 @@ if [ $status -ne 0 ]; then
   exit $status
 fi
 
-entrypoint_log() {
-    if [ -z "${NGINX_ENTRYPOINT_QUIET_LOGS:-}" ]; then
-        echo "$@"
-    fi
-}
-
-if [ "$1" = "nginx" ] || [ "$1" = "nginx-debug" ]; then
-    if /usr/bin/find "/docker-entrypoint.d/" -mindepth 1 -maxdepth 1 -type f -print -quit 2>/dev/null | read v; then
-        entrypoint_log "$0: /docker-entrypoint.d/ is not empty, will attempt to perform configuration"
-
-        entrypoint_log "$0: Looking for shell scripts in /docker-entrypoint.d/"
-        find "/docker-entrypoint.d/" -follow -type f -print | sort -V | while read -r f; do
-            case "$f" in
-                *.envsh)
-                    if [ -x "$f" ]; then
-                        entrypoint_log "$0: Sourcing $f";
-                        . "$f"
-                    else
-                        # warn on shell scripts without exec bit
-                        entrypoint_log "$0: Ignoring $f, not executable";
-                    fi
-                    ;;
-                *.sh)
-                    if [ -x "$f" ]; then
-                        entrypoint_log "$0: Launching $f";
-                        "$f"
-                    else
-                        # warn on shell scripts without exec bit
-                        entrypoint_log "$0: Ignoring $f, not executable";
-                    fi
-                    ;;
-                *) entrypoint_log "$0: Ignoring $f";;
-            esac
-        done
-
-        entrypoint_log "$0: Configuration complete; ready for start up"
-    else
-        entrypoint_log "$0: No files found in /docker-entrypoint.d/, skipping configuration"
-    fi
-fi
-
 exec "$@"
 
-#echo "> /usr/sbin/nginx"
+/etc/init.d/php7.4-fpm start
+
+
+echo "> /usr/sbin/nginx"
 #source /etc/apache2/envvars
-#/usr/sbin/apache2
-#status=$?
-#if [ $status -ne 0 ]; then
-#  echo "Failed to start apache2 web server: $status"
-#  exit $status
-#fi
+/usr/sbin/nginx
+status=$?
+if [ $status -ne 0 ]; then
+  echo "Failed to start nginx web server: $status"
+  exit $status
+fi
 
 
 echo "> /usr/sbin/bc-server -u bluecherry -g bluecherry"

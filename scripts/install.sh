@@ -30,7 +30,7 @@ docker_compose_init() {
 #uptimekuma
 
 
-echo "\n\nDownloading latest Bluecherry and related images...this may take a while...\n\n"
+echo "Downloading latest Bluecherry and related images...this may take a while..."
 
 cd "$workingpath/bluecherry-docker"
 
@@ -42,7 +42,7 @@ docker compose pull
 docker compose up bc-mysql -d
 
 echo "Sleeping 45 seconds to make sure the database is initialized correctly..."
-echo "\n\n"
+
 sleep 45
 docker compose stop bc-mysql
 docker compose up -d bc-mysql
@@ -76,7 +76,7 @@ Create a password for the mysql bluecherry user
 "
 
 echo "Time Zone (i.e. - America/Chicago): "
-read timezone
+read timezoneset
 
 #read -p "Time Zone (i.e. - America/Chicago)：" timezone
 #timezoneset="${timezone:=American/Chicago}"
@@ -257,7 +257,7 @@ case $distribution in
   "debian" | "ubuntu")
     install_debian_packages
     ;;
-  "centos" | "rhel" | "fedora")
+  "centos" | "rhel" | "fedora" | "rocky" | "Rocky")
     install_redhat_packages
     ;;
   "sles" | "opensuse" | "suse")
@@ -311,6 +311,11 @@ install_suse_packages() {
 install_arch_packages() {
   pacman -Syu --noconfirm git
   install_docker
+  sed -i 's/^LimitNOFILE=infinity$/LimitNOFILE=1048576/'  /usr/lib/systemd/system/docker.service
+  sed -i 's/^LimitNOFILE=infinity$/LimitNOFILE=1048576/'  /usr/lib/systemd/system/containerd.service
+  systemctl start docker
+  systemctl enable docker
+  pacman -Syu --noconfirm docker-compose
 }
 
 # Function to install packages on Fedora
@@ -390,7 +395,7 @@ docker_compose_init
 esac
 
 
-read -p "Do you want to configure SMTP settings?? [y/n]: " smtp
+read -p "Do you want to configure SMTP settings? [y/n]: " smtp
 
 case $smtp in
     y)

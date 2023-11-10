@@ -302,4 +302,6 @@ RUN chmod +x /entrypoint.sh \
  && chmod +x /bin/bc-database-create \
  && chmod +x /bin/bc-database-upgrade
 
+CMD /etc/init.d/php7.4-fpm restart
+
 CMD "/entrypoint.sh"

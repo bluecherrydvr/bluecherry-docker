@@ -52,6 +52,8 @@ jobs:
         run: docker ps
       - name: Check out the repo
         uses: actions/checkout@v3
+      - name: Identify git repo path
+        run: ls $GITHUB_WORKSPACE && ls -l /home/runner/work/
       - name: Wait for mysql
         run: sleep 15
       - name: Set up Docker Buildx
@@ -77,5 +79,5 @@ jobs:
   #          password: ${{ secrets.DOCKER_PASSWORD }}   
 #            file: ./server/Dockerfile
             push: true
-            tags: bluecherrydvr/bluecherry:citesting
+            tags: bluecherrydvr/bluecherry:unstable
             labels: github_ci                 
