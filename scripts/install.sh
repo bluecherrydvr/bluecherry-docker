@@ -30,7 +30,7 @@ docker_compose_init() {
 #uptimekuma
 
 
-echo "\n\nDownloading latest Bluecherry and related images...this may take a while...\n\n"
+echo "Downloading latest Bluecherry and related images...this may take a while..."
 
 cd "$workingpath/bluecherry-docker"
 
@@ -42,7 +42,7 @@ docker compose pull
 docker compose up bc-mysql -d
 
 echo "Sleeping 45 seconds to make sure the database is initialized correctly..."
-echo "\n\n"
+
 sleep 45
 docker compose stop bc-mysql
 docker compose up -d bc-mysql
@@ -395,7 +395,7 @@ docker_compose_init
 esac
 
 
-read -p "Do you want to configure SMTP settings?? [y/n]: " smtp
+read -p "Do you want to configure SMTP settings? [y/n]: " smtp
 
 case $smtp in
     y)
