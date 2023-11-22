@@ -298,6 +298,12 @@ install_redhat_packages() {
   yum update
   yum install -y git
   install_docker
+# Fix mainly for rocky...but we will try on all RHEL releases
+  sed -i 's/^LimitNOFILE=infinity$/LimitNOFILE=1048576/'  /usr/lib/systemd/system/docker.service
+  sed -i 's/^LimitNOFILE=infinity$/LimitNOFILE=1048576/'  /usr/lib/systemd/system/containerd.service
+  systemctl daemon-reload
+  systemctl stop docker
+  systemctl start docker
 }
 
 # Function to install packages on SUSE-based distributions
