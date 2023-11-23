@@ -136,7 +136,6 @@ read -p "Please provide the SMTP password: " smtppassword
 read -p "Please provide the SMTP port: " smtpport
 #read -p "Please provide the SMTP username: " smtplogin
 
-#read -p "Please provide the NFS mount point for the NFS export" nfsmountpoint
 
 echo "
 
@@ -196,7 +195,6 @@ echo "installing nfs"
 
 read -p "Please provide the IP address of the NFS server: " nfsserver
 read -p "Please provide the NFS server export path: " nfsexport
-#read -p "Please provide the NFS mount point for the NFS export" nfsmountpoint
 
 echo "
 
@@ -432,32 +430,6 @@ case $add_nfs in
 esac
 
 
-configure_nfs() {
-
-echo "installing nfs"
-
-read -p "Please provide the IP address of the NFS server: " nfsserver
-read -p "Please provide the NFS server export path: " nfsexport
-
-echo "
-
-version: '3.8'
-services:
-
- bluecherry:
-    volumes:
-#      - ./recordings:/var/lib/bluecherry/recordings
-      - videos:/media/bluecherry/nfs
-
-volumes:
-  videos:
-    driver_opts:
-      type: "nfs"
-      o: "addr=$nfsserver,nolock,soft"
-      device: ":$nfsexport"
-" > $workingpath/bluecherry-docker/docker-compose.override.yml
-
-}
 # Let the user know how to access to Bluecherry web UI
 
 IP=$(ip route get 8.8.8.8 | sed -n '/src/{s/.*src *\([^ ]*\).*/\1/p;q}')
