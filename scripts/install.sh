@@ -7,7 +7,7 @@ export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 # Make sure we are root or we sudo'd!
 
-[ $(id -u) != "0" ] && { echo "Error: You must be root to run this script"; exit 1; }
+[ "$(id -u)" != "0" ] && { echo "Error: You must be root to run this script"; exit 1; }
 
 
 # set the current path so we aren't confused when moving directories.  Always assuming $workingpath/bluecherry-docker for all Bluecherry scripts
@@ -38,7 +38,7 @@ docker_compose_init() {
 
     # Init the mailenv config
 
-    cp $workingpath/bluecherry-docker/mailenv-example $workingpath/bluecherry-docker/.mailenv
+    cp "$workingpath"/bluecherry-docker/mailenv-example "$workingpath"/bluecherry-docker/.mailenv
 
     docker compose pull
     docker compose up bc-mysql -d
@@ -50,7 +50,7 @@ docker_compose_init() {
     docker compose up -d bc-mysql
 
     echo "Sleeping another 15 seconds to run the database creation scripts..."
-    echo "\n\n"
+    echo -e "\n\n"
 
     sleep 15
     docker compose run bluecherry bc-database-create
@@ -69,7 +69,7 @@ docker_compose_init() {
 
 configure_env() {
 
-    echo "\n\n******************************************************************\n\n"
+    echo -e "\n\n******************************************************************\n\n"
     echo "You will be asked the following to configure the docker container:
 
 Time Zone (formatted like this - See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
@@ -78,12 +78,12 @@ Create a password for the mysql bluecherry user
 "
 
     echo "Time Zone (i.e. - America/Chicago): "
-    read timezoneset
+    read -r timezoneset
 
     #read -p "Time Zone (i.e. - America/Chicago)：" timezone
     #timezoneset="${timezone:=American/Chicago}"
-    read -p "Please provide a mysql admin password：" mysqladminpass
-    read -p "Please provide a mysql bluecherry password：" mysqlbluecherrypass
+    read -r -p "Please provide a mysql admin password：" mysqladminpass
+    read -r -p "Please provide a mysql bluecherry password：" mysqlbluecherrypass
 
 
     # Install variables
@@ -120,7 +120,7 @@ BLUECHERRY_USERHOST=%
 
 # UID/GID to run bluecherry user as. If you want to access recordings from the host, it is
 # recommended to set them the same as a user/group that you want access to read it.
-# run `id $(whoami)` to find the UID/GID of your user
+# run \`id \$(whoami)\` to find the UID/GID of your user
 BLUECHERRY_GROUP_ID=1000
 BLUECHERRY_USER_ID=1000
 
@@ -132,10 +132,10 @@ configure_smtp() {
 
     echo "Configure SMTP"
 
-    read -p "Please provide the SMTP server: " smtpserver
-    read -p "Please provide the SMTP username: " smtplogin
-    read -p "Please provide the SMTP password: " smtppassword
-    read -p "Please provide the SMTP port: " smtpport
+    read -r -p "Please provide the SMTP server: " smtpserver
+    read -r -p "Please provide the SMTP username: " smtplogin
+    read -r -p "Please provide the SMTP password: " smtppassword
+    read -r -p "Please provide the SMTP port: " smtpport
     #read -p "Please provide the SMTP username: " smtplogin
 
 
@@ -148,7 +148,7 @@ SMTP_PORT=$smtpport
 SERVER_HOSTNAME=$smtpserver
 ALWAYS_ADD_MISSING_HEADERS=yes
 
-" > $workingpath/bluecherry-docker/.mailenv
+" > "$workingpath"/bluecherry-docker/.mailenv
 
 }
 
@@ -193,8 +193,8 @@ configure_nfs() {
 
     echo "installing nfs"
 
-    read -p "Please provide the IP address of the NFS server: " nfsserver
-    read -p "Please provide the NFS server export path: " nfsexport
+    read -r -p "Please provide the IP address of the NFS server: " nfsserver
+    read -r -p "Please provide the NFS server export path: " nfsexport
 
     echo "
 
@@ -209,17 +209,18 @@ services:
 volumes:
   videos:
     driver_opts:
-      type: "nfs"
-      o: "addr=$nfsserver,nolock,soft"
-      device: ":$nfsexport"
-" > $workingpath/bluecherry-docker/docker-compose.override.yml
+      type: \"nfs\"
+      o: \"addr=$nfsserver,nolock,soft\"
+      device: \":$nfsexport\"
+" > "$workingpath"/bluecherry-docker/docker-compose.override.yml
 
 }
 
 
 clone_bluecherrydocker() {
 
-    local directory=$pwd/bluecherry-docker
+    local directory
+    directory="$(pwd)"/bluecherry-docker
     if [ -d "$directory" ]; then
         echo "Directory $directory exists...skipping...."
         return 0
@@ -255,7 +256,7 @@ install_bluecherry() {
         "debian" | "ubuntu")
             install_debian_packages
             ;;
-        "centos" | "rhel" | "fedora" | "rocky" | "Rocky")
+        "centos" | "rhel" | "rocky" | "Rocky")
             install_redhat_packages
             ;;
         "sles" | "opensuse" | "suse")
@@ -277,6 +278,7 @@ install_bluecherry() {
 # Function to detect the Linux distribution
 detect_distribution() {
     if [ -f "/etc/os-release" ]; then
+        # shellcheck disable=SC1091 # "Not following: /etc/os-release was not specified as input"
         . /etc/os-release
         echo "$ID"
     else
@@ -361,6 +363,7 @@ uptimekuma() {
     tar -xvf dist.tar.gz
 }
 
+# shellcheck disable=SC2162 # "read without -r will mangle backslashes."
 read -p "Do you want to install docker and setup Bluecherry server? [y/n]: " answer
 
 # Execute the appropriate function based on the answer
@@ -378,6 +381,7 @@ case $answer in
         ;;
 esac
 
+# shellcheck disable=SC2162 # "read without -r will mangle backslashes."
 read -p "Do you want to download and configure the Bluecherry docker images?  If this is the first run of the script then select 'y' [y/n]: " clonedocker
 
 case $clonedocker in
@@ -394,6 +398,7 @@ case $clonedocker in
 esac
 
 
+# shellcheck disable=SC2162 # "read without -r will mangle backslashes."
 read -p "Do you want to configure SMTP settings? [y/n]: " smtp
 
 case $smtp in
@@ -410,6 +415,7 @@ esac
 echo -e "\nNote: NFS is typically recommended for external storage.  Read the Bluecherry docs for information on adding CIFS (smb) shares\n\n"
 
 
+# shellcheck disable=SC2162 # "read without -r will mangle backslashes."
 read -p "Do you want to add a NFS mount? [y/n]: " add_nfs
 
 case $add_nfs in
