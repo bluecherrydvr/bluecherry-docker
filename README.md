@@ -18,8 +18,6 @@ The most convenient way to install the Bluecherry docker image is to use this sc
 
 The included Dockerfile generates an image based on an **Ubuntu 20.04** docker image. The latest tagged version of the **Bluecherry Server v3.x.x** from the [bluecherry-apps](https://github.com/bluecherrydvr/bluecherry-apps) source repository. The included docker-compose file uses **MySQL version 8.x.x** to host the bluecherry database. 
 
-The current version of this docker code intends to build a bluecherry docker image that is as small as possible, and which does *not* bake in any configuration into the image (since docker images are intended to be ephemeral).
-
 Instead, needed configuration parameters such as database and server passwords are passed into the docker container via environment variables. Environment variables are defined and passed using typical methods with `docker` or `docker-compose` commands.
 
 ## Initialization and Usage

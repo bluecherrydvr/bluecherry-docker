@@ -1,0 +1,27 @@
+#!/usr/bin/expect -f
+#exp_internal 1
+set timeout 60
+spawn bluecherry-docker/scripts/install.sh
+expect -ex {Do you want to install docker and setup Bluecherry server? [y/n]: }
+send -- "y\r"
+
+expect -ex {Do you want to download and configure the Bluecherry docker images?  If this is the first run of the script then select 'y' [y/n]: }
+send -- "y\r"
+expect -ex {Time Zone (i.e. - America/Chicago): }
+send -- "Etc/UTC\r"
+expect -ex {Please provide a mysql admin password：}
+send -- "mysql-admin-password\r"
+expect -ex {Please provide a mysql bluecherry password：}
+send -- "mysql-bluecherry-password\r"
+
+expect -ex {Sleeping 45 seconds to make sure the database is initialized correctly...}
+set timeout 60
+expect -ex {Sleeping another 15 seconds to run the database creation scripts...}
+
+expect -ex {Do you want to configure SMTP settings? [y/n]: }
+send -- "n\r"
+
+expect -ex {Do you want to add a NFS mount? [y/n]: }
+send -- "n\r"
+
+expect eof
