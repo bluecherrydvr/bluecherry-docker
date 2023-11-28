@@ -42,6 +42,7 @@ echo "> Writing /etc/bluecherry.conf"
 
 echo "> chown bluecherry:bluecherry /var/lib/bluecherry/recordings"
 chown bluecherry:bluecherry /var/lib/bluecherry/recordings
+chmod ug+rwx /var/lib/bluecherry/recordings
 
 
 # The bluecherry container's Dockerfile sets rsyslog to route the bluecherry
