@@ -1,77 +1,77 @@
 version: '3.7'
+
 services:
   bc-mysql:
     image: mysql:8.0
     container_name: bc-mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-    networks: 
-      - bluecherry_net
+    networks: [bluecherry_net]
     volumes:
       - ./database:/var/lib/mysql
-      - "/etc/timezone:/etc/timezone:ro"
-      - "/etc/localtime:/etc/localtime:ro"
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     environment:
-      MYSQL_ROOT_PASSWORD: $MYSQL_ADMIN_PASSWORD
-      TZ: $TZ
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ADMIN_PASSWORD}
+      TZ: ${TZ:-UTC}
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -p\"$${MYSQL_ROOT_PASSWORD}\" -h 127.0.0.1 --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
   bluecherry:
-    image: bluecherrydvr/bluecherry:latest
+    # Use your pushed tag (dev-ci, date, or sha). Avoid building locally here.
+    image: bluecherrydvr/bluecherry:dev-ci
+    pull_policy: always                # ensure updated pulls on 'up' (Compose v2.21+)
     container_name: bc-server
+    restart: unless-stopped
+    networks: [bluecherry_net]
+    depends_on:
+      bc-mysql:
+        condition: service_healthy
     cap_add:
       - NET_BIND_SERVICE
-    build:
-      context: ./server/
-      network: bluecherry_net
-      args:
-        MYSQL_ADMIN_PASSWORD: $MYSQL_ADMIN_PASSWORD
-        # MYSQL_ADMIN_LOGIN: $MYSQL_ADMIN_LOGIN
-        # BLUECHERRY_DB_USER: $BLUECHERRY_DB_USER
-        BLUECHERRY_DB_PASSWORD: $BLUECHERRY_DB_PASSWORD
-        # BLUECHERRY_DB_NAME: $BLUECHERRY_DB_NAME
-        # BLUECHERRY_DB_HOST: $BLUECHERRY_DB_HOST
-        # BLUECHERRY_DB_ACCESS_HOST: $BLUECHERRY_DB_ACCESS_HOST
-        # BLUECHERRY_LINUX_GROUP_ID: $BLUECHERRY_LINUX_GROUP_ID
-        # BLUECHERRY_LINUX_USER_ID: $BLUECHERRY_LINUX_USER_ID
-    restart: unless-stopped
-    networks: 
-      - bluecherry_net
     volumes:
       - ./recordings:/var/lib/bluecherry/recordings
       - ./data/bconf:/var/lib/bluecherry/.local/share/data/bconf
       - ./data/letsencrypt:/usr/share/bluecherry/nginx-includes/letsencrypt
       - ./data/backups:/usr/share/bluecherry/backups
-      # - ./server/bluecherry.conf:/etc/bluecherry.conf
-    # Enable this only if you have a supported VAAPI device and /dev/dri exists on the host system.
-    # devices:
-    #   - /dev/dri:/dev/dri
     ports:
       - "7001:7001/tcp"
       - "7002:7002/tcp"
     env_file:
       - ./.env
-    depends_on:
-      - bc-mysql
+    environment:
+      # Ensure the app points at the Compose service name
+      BLUECHERRY_DB_HOST: bc-mysql
+      # Map your .env's BLUECHERRY_USERHOST to what the entrypoint expects
+      BLUECHERRY_DB_ACCESS_HOST: ${BLUECHERRY_USERHOST:-%}
+      TZ: ${TZ:-UTC}
+      # Optional debug toggles:
+      # DEBUG: "1"
+      # DISABLE_WATCHDOG: "1"
+      # WATCHDOG_INTERVAL: "5"
+    # Robust process healthcheck (overrides any old baked one)
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f '/usr/sbin/bc-server' >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 10
 
   mta_mailer:
-      container_name: bc-mail
-      cap_add:
-        - NET_BIND_SERVICE
-      image: juanluisbaptiste/postfix:latest
-# We assume bc-mail is only used by Bluecherry apps and not something else on the network
-#      expose:
-#        - "25"
-      dns:
-         - 8.8.8.8
-#      ports:
-#        - "25:25/tcp"
-      env_file:
-        - .mailenv
-      restart: always
-      networks:
-      - bluecherry_net
-      volumes:
-        - "/etc/localtime:/etc/localtime:ro"
+    image: juanluisbaptiste/postfix:latest
+    container_name: bc-mail
+    cap_add: [NET_BIND_SERVICE]
+    dns: [8.8.8.8]
+    env_file:
+      - .mailenv
+    restart: always
+    networks: [bluecherry_net]
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
 
   uptime-kuma:
     image: louislam/uptime-kuma:latest
@@ -81,9 +81,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "1337:3001"
-    networks:
-     - bluecherry_net
-    restart: always      
+    networks: [bluecherry_net]
+    restart: always
 
 networks:
   bluecherry_net:
