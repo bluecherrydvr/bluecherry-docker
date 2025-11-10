@@ -432,8 +432,12 @@ esac
 
 
 # Let the user know how to access to Bluecherry web UI
-
 IP=$(ip route get 8.8.8.8 | sed -n '/src/{s/.*src *\([^ ]*\).*/\1/p;q}')
+echo "You can now access bluecherry using https://${IP}:7001"
+echo "The certificate is self-signed, yout browser will show a security warning"
+echo "Default login is 'admin' with password 'bluecherry'"
+echo "Remember to change your password"
+
 check_docker_processes
 
 # And we hope everything worked...
