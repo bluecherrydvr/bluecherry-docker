@@ -27,17 +27,12 @@ check_docker_process() {
 
 
 docker_compose_init() {
-    # Make sure we are still in the bluecherry-docker directory
-
-    #uptimekuma
-
-
     echo "Downloading latest Bluecherry and related images...this may take a while..."
 
+    # Make sure we are still in the bluecherry-docker directory
     cd "$workingpath/bluecherry-docker"
 
     # Init the mailenv config
-
     cp "$workingpath"/bluecherry-docker/mailenv-example "$workingpath"/bluecherry-docker/.mailenv
 
     docker compose pull
@@ -55,12 +50,6 @@ docker_compose_init() {
     sleep 15
     docker compose run bluecherry bc-database-create
     docker compose down
-    #for i in {1..50}; do
-    #    if docker compose pull; then
-    #        if docker compose up -d; then
-    #            break
-    #        fi
-    #    fi
     sleep 10
     docker compose up -d
     #done
@@ -343,24 +332,6 @@ install_docker() {
         systemctl enable docker
     fi
 
-}
-
-uptimekuma() {
-
-    echo -e "Installing Uptime Kuma for monitoring of Bluecherry services\n\n"
-
-    DOWNLOAD_URL='https://github.com/louislam/uptime-kuma/releases/download/1.21.3/dist.tar.gz'
-
-    cd "$workingpath/bluecherry-docker" || exit 1
-
-    wget "${DOWNLOAD_URL}"
-    tar -zxf "$workingpath/dist.tar.gz" -C "$workingpath"
-
-    echo -e "Installing Uptime Kuma for monitoring of Bluecherry services\n\n"
-
-    cd bluecherry-docker
-    wget https://github.com/louislam/uptime-kuma/releases/download/1.21.3/dist.tar.gz
-    tar -xvf dist.tar.gz
 }
 
 # shellcheck disable=SC2162 # "read without -r will mangle backslashes."
