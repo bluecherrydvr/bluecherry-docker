@@ -256,7 +256,7 @@ install_bluecherry() {
         "debian" | "ubuntu")
             install_debian_packages
             ;;
-        "centos" | "rhel" | "rocky" | "Rocky")
+        "centos" | "rhel" | "rocky" | "almalinux" | "Rocky")
             install_redhat_packages
             ;;
         "sles" | "opensuse" | "suse")
