@@ -73,18 +73,13 @@ configure_env() {
     echo "You will be asked the following to configure the docker container:
 
 Time Zone (formatted like this - See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-Create a password for the mysql admin
-Create a password for the mysql bluecherry user
 "
 
     echo "Time Zone (i.e. - America/Chicago): "
     read -r timezoneset
 
-    #read -p "Time Zone (i.e. - America/Chicago)：" timezone
-    #timezoneset="${timezone:=American/Chicago}"
-    read -r -p "Please provide a mysql admin password：" mysqladminpass
-    read -r -p "Please provide a mysql bluecherry password：" mysqlbluecherrypass
-
+    mysqladminpass=$(LC_ALL=C tr -dc 'A-Za-z0-9~_.:,;#+~*?!%&/=-' < /dev/urandom | head -c 32)
+    mysqlbluecherrypass=$(LC_ALL=C tr -dc 'A-Za-z0-9~_.:,;#+~*?!%&/=-' < /dev/urandom | head -c 32)
 
     # Install variables
     echo "
