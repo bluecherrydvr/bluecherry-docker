@@ -1,20 +1,47 @@
-version: '3.7'
+# Bluecherry Docker Compose.
+# Requires Docker Compose v2.21+ (uses pull_policy and
+# depends_on with condition: service_healthy).
+#
+# First run:
+#   cp dotenv .env               # then set real passwords in .env
+#   cp mailenv-example .mailenv  # then set SMTP credentials
+#
+# Migrating MySQL from the old ./database bind mount?
+# Copy it into the new named volume once, then remove ./database:
+#   docker run --rm -v bc-mysql-data:/to -v ./database:/from:ro \
+#     alpine sh -c 'cp -a /from/. /to/'
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
 
 services:
   bc-mysql:
     image: mysql:8.0
     container_name: bc-mysql
+    # mysql:8.0 still honors this flag; upstream deprecated it in favour of
+    # caching_sha2_password. Keep it while bluecherry's client needs native
+    # passwords; drop it once caching_sha2_password is verified end to end.
     command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    networks: [bluecherry_net]
+    restart: unless-stopped
+    networks:
+      - backend
     volumes:
-      - ./database:/var/lib/mysql
-      - /etc/timezone:/etc/timezone:ro
+      # Named volume: avoids UID 999 permission fights that host bind mounts
+      # cause, and keeps the DB out of reach of the frontend services.
+      - bc-mysql-data:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ADMIN_PASSWORD}
+      # Root is used once by the bluecherry entrypoint
+      # (server/bc-database-create.sh) to create the database and the limited
+      # BLUECHERRY_DB_USER; the app itself connects as that user, not root.
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ADMIN_PASSWORD:?Set MYSQL_ADMIN_PASSWORD in .env (copy dotenv to .env first).}
       TZ: ${TZ:-UTC}
+    logging: *default-logging
     healthcheck:
+      # Container-local only; consistent with the upstream mysql image pattern.
       test: ["CMD-SHELL", "mysqladmin ping -p\"$${MYSQL_ROOT_PASSWORD}\" -h 127.0.0.1 --silent"]
       interval: 10s
       timeout: 5s
@@ -24,10 +51,12 @@ services:
   bluecherry:
     # Use your pushed tag (dev-ci, date, or sha). Avoid building locally here.
     image: bluecherrydvr/bluecherry:dev-ci
-    pull_policy: always                # ensure updated pulls on 'up' (Compose v2.21+)
+    pull_policy: always                # ensure updated pulls on 'up'
     container_name: bc-server
     restart: unless-stopped
-    networks: [bluecherry_net]
+    networks:
+      - frontend
+      - backend
     depends_on:
       bc-mysql:
         condition: service_healthy
@@ -38,7 +67,9 @@ services:
       - ./data/bconf:/var/lib/bluecherry/.local/share/data/bconf
       - ./data/letsencrypt:/usr/share/bluecherry/nginx-includes/letsencrypt
       - ./data/backups:/usr/share/bluecherry/backups
+      - /etc/localtime:/etc/localtime:ro
     ports:
+      # Only ports the server needs; open more only if your setup requires it.
       - "7001:7001/tcp"
       - "7002:7002/tcp"
     env_file:
@@ -53,37 +84,54 @@ services:
       # DEBUG: "1"
       # DISABLE_WATCHDOG: "1"
       # WATCHDOG_INTERVAL: "5"
-    # Robust process healthcheck (overrides any old baked one)
+    logging: *default-logging
     healthcheck:
-      test: ["CMD-SHELL", "pgrep -f '/usr/sbin/bc-server' >/dev/null || exit 1"]
+      # TCP probe: healthy means accepting connections on 7001,
+      # not merely that the process exists.
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/127.0.0.1/7001'"]
       interval: 30s
       timeout: 5s
       start_period: 60s
       retries: 10
 
   mta_mailer:
-    image: juanluisbaptiste/postfix:latest
+    image: juanluisbaptiste/postfix:1
+    pull_policy: always
     container_name: bc-mail
-    cap_add: [NET_BIND_SERVICE]
-    dns: [8.8.8.8]
+    restart: unless-stopped
+    networks:
+      - frontend
     env_file:
       - .mailenv
-    restart: always
-    networks: [bluecherry_net]
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    logging: *default-logging
 
   uptime-kuma:
-    image: louislam/uptime-kuma:latest
+    image: louislam/uptime-kuma:2
+    pull_policy: always
     container_name: uptime-kuma
+    restart: unless-stopped
+    networks:
+      - frontend
     volumes:
       - ./uptime-kuma-data:/app/data
-      - /var/run/docker.sock:/var/run/docker.sock
+      # Read-only: Kuma only inspects containers. Never mount this writable;
+      # a compromised monitor with a writable socket controls the host.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
-      - "1337:3001"
-    networks: [bluecherry_net]
-    restart: always
+      # No auth on first boot: localhost-only by default.
+      # Change to "1337:3001" only if LAN access is really needed.
+      - "127.0.0.1:1337:3001"
+    logging: *default-logging
 
 networks:
-  bluecherry_net:
-    name: bluecherry_net
+  frontend:
+    name: bluecherry_frontend
+  backend:
+    name: bluecherry_backend
+    internal: true
+
+volumes:
+  bc-mysql-data:
+    name: bc-mysql-data
